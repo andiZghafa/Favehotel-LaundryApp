@@ -1,9 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:intl/intl.dart';
-import 'package:universal_html/html.dart' as html;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io' as io;
+import 'package:laundry_app/services/file_saver.dart';
 
 class ExcelExportResult {
   final bool success;
@@ -69,7 +66,13 @@ class ExcelExportService {
       workbook.dispose();
 
       final fileName = '${categoryName.toUpperCase()}_${handlerName.replaceAll(' ', '_')}_$dateStr.xlsx';
-      return await _saveOrDownload(bytes, fileName, categoryName);
+      final msg = await saveExportFile(bytes, fileName, categoryName);
+
+      return ExcelExportResult(
+        success: true,
+        message: msg,
+        filePath: fileName,
+      );
     } catch (e) {
       return ExcelExportResult(
         success: false,
@@ -106,7 +109,13 @@ class ExcelExportService {
       workbook.dispose();
 
       final fileName = 'REWASH_${handlerName.replaceAll(' ', '_')}_$dateStr.xlsx';
-      return await _saveOrDownload(bytes, fileName, 'REWASH');
+      final msg = await saveExportFile(bytes, fileName, 'REWASH');
+
+      return ExcelExportResult(
+        success: true,
+        message: msg,
+        filePath: fileName,
+      );
     } catch (e) {
       return ExcelExportResult(
         success: false,
@@ -178,56 +187,6 @@ class ExcelExportService {
       cell.cellStyle.bold = true;
       cell.cellStyle.backColor = '#900C46';
       cell.cellStyle.fontColor = '#FFFFFF';
-    }
-  }
-
-  static Future<ExcelExportResult> _saveOrDownload(
-    List<int> bytes,
-    String fileName,
-    String categoryName,
-  ) async {
-    if (kIsWeb) {
-      final blob = html.Blob(
-        [bytes],
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      );
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', fileName)
-        ..click();
-      html.Url.revokeObjectUrl(url);
-
-      return ExcelExportResult(
-        success: true,
-        message: 'Downloaded $fileName successfully in browser.',
-        filePath: fileName,
-      );
-    } else {
-      try {
-        io.Directory? directory;
-        if (io.Platform.isAndroid) {
-          final downloadDir = io.Directory('/storage/emulated/0/Download/laundry/$categoryName/');
-          if (await downloadDir.exists() || await downloadDir.create(recursive: true).then((_) => true).catchError((_) => false)) {
-            directory = downloadDir;
-          }
-        }
-        directory ??= await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
-
-        final filePath = '${directory.path}${directory.path.endsWith('/') ? '' : '/'}$fileName';
-        final file = io.File(filePath);
-        await file.writeAsBytes(bytes, flush: true);
-
-        return ExcelExportResult(
-          success: true,
-          message: 'Saved to $filePath',
-          filePath: filePath,
-        );
-      } catch (e) {
-        return ExcelExportResult(
-          success: false,
-          message: 'Error saving file: ${e.toString()}',
-        );
-      }
     }
   }
 }
