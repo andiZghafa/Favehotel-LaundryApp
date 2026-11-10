@@ -162,6 +162,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
           // Item List
           Expanded(
             child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
               itemCount: filteredItems.length,
               itemBuilder: (context, index) {

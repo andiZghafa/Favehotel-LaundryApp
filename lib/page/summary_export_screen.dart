@@ -156,6 +156,7 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
           // Scrollable Content
           Expanded(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

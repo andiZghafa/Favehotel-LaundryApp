@@ -54,6 +54,10 @@ class AppTheme {
       textTheme: GoogleFonts.poppinsTextTheme(baseDark.textTheme),
       primaryColor: AppColors.brandMagenta,
       scaffoldBackgroundColor: AppColors.plumDark,
+      scrollbarTheme: const ScrollbarThemeData(
+        thumbVisibility: WidgetStatePropertyAll(false),
+        trackVisibility: WidgetStatePropertyAll(false),
+      ),
       colorScheme: const ColorScheme.dark(
         primary: AppColors.brandMagenta,
         secondary: AppColors.coralAccent,

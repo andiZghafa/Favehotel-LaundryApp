@@ -208,6 +208,7 @@ class _RewashScreenState extends State<RewashScreen> {
           // List View
           Expanded(
             child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
               itemCount: filteredItems.length,
               itemBuilder: (context, index) {
