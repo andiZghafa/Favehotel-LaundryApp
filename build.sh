@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# If build/web is committed and ready, deploy directly in seconds
+if [ -f "build/web/index.html" ]; then
+  echo "=== Pre-built Flutter web artifacts detected in build/web ==="
+  echo "=== Deploying directly to Vercel without downloading SDK ==="
+  ls -lh build/web
+  exit 0
+fi
+
 echo "=== Configuring Git Safe Directory ==="
 git config --global --add safe.directory "*"
 
@@ -19,8 +27,8 @@ flutter config --no-analytics
 flutter config --enable-web
 flutter pub get
 
-echo "=== Building Web App ==="
-flutter build web --release
+echo "=== Building Web App (Standard JS) ==="
+flutter build web --release --no-wasm
 
 echo "=== Build Succeeded ==="
 ls -la build/web
