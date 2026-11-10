@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:laundry_app/page/home.dart';
 import 'package:laundry_app/theme/app_theme.dart';
 import 'package:laundry_app/widgets/app_background.dart';
+import 'package:laundry_app/widgets/brand_wordmark.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,32 +15,34 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1400),
     );
 
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.7, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.0, 0.55, curve: AppMotion.easeSmoothOut),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.9, curve: AppMotion.easeSmoothOut),
+        curve: const Interval(0.0, 0.55, curve: AppMotion.easeSmoothOut),
       ),
     );
 
     _controller.forward();
 
-    // Auto-advance after 2 seconds
-    Future.delayed(const Duration(milliseconds: 2000), () {
+    Future.delayed(const Duration(milliseconds: 1600), () {
       if (mounted) {
         _navigateToHome();
       }
@@ -71,98 +74,76 @@ class _SplashScreenState extends State<SplashScreen>
       onTap: _navigateToHome,
       child: AppBackground(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 32.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Spacer(),
-
-              // Logo in rounded glass container
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Container(
-                    width: 140,
-                    height: 140,
-                    padding: const EdgeInsets.all(22),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(36),
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.brandMagenta.withOpacity(0.4),
-                          blurRadius: 35,
-                          offset: const Offset(0, 12),
-                        ),
-                      ],
-                    ),
-                    child: Image.asset(
-                      'assets/IKON.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.local_laundry_service,
-                        size: 70,
-                        color: AppColors.brandMagenta,
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const BrandWordmark(
+                        width: 176,
+                        height: 52,
+                        borderRadius: 12,
                       ),
-                    ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Housekeeping Logbook',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.6,
+                          height: 1.2,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Daily linen inventory, F&B fabrics, and stain rewash tracking.',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          height: 1.45,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      SizedBox(
+                        width: 140,
+                        child: AnimatedBuilder(
+                          animation: _controller,
+                          builder: (context, _) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: _controller.value,
+                                minHeight: 3,
+                                backgroundColor: Colors.white.withOpacity(0.12),
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  AppColors.coralAccent,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              const SizedBox(height: 36),
-
-              // Title Typography
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Column(
-                  children: [
-                    const Text(
-                      'HOUSEKEEPING',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 3.0,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.2)),
-                      ),
-                      child: const Text(
-                        'LAUNDRY LOGBOOK',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 2.5,
-                          color: AppColors.peachLight,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               const Spacer(),
-
-              // Subtle tap hint
               FadeTransition(
                 opacity: _fadeAnimation,
-                child: const Padding(
-                  padding: EdgeInsets.only(bottom: 24.0),
-                  child: Text(
-                    'Tap anywhere to start',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textMuted,
-                      letterSpacing: 0.5,
-                    ),
+                child: const Text(
+                  'favehotel Padjajaran Bogor',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textMuted,
                   ),
                 ),
               ),

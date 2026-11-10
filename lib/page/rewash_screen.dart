@@ -15,7 +15,7 @@ class RewashScreen extends StatefulWidget {
 }
 
 class _RewashScreenState extends State<RewashScreen> {
-  int _selectedTabIndex = 0; // 0: FREN, 1: FAST
+  int _selectedTabIndex = 0; // 0: Fren Linen, 1: Fast Items
   String _searchQuery = '';
 
   late List<String> _frenItemsList;
@@ -95,32 +95,52 @@ class _RewashScreenState extends State<RewashScreen> {
     return AppBackground(
       child: Column(
         children: [
-          // Header Bar
+          // Top Workbench Header Bar (Edge-aligned, Linear/Airbnb hierarchy)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
-                  onPressed: () => Navigator.pop(context),
+                Material(
+                  color: AppColors.surfaceCard,
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppColors.surfaceGlassBorder),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: AppColors.textPrimary,
+                        size: 18,
+                      ),
+                    ),
+                  ),
                 ),
+                const SizedBox(width: 14),
                 const Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'REWASH STATION',
+                        'Rewash Station',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.35,
                           color: AppColors.textPrimary,
                         ),
                       ),
+                      SizedBox(height: 1),
                       Text(
-                        'Separate Stained & Defective Linens',
+                        'Log stained or damaged items by group',
                         style: TextStyle(
-                          fontSize: 11,
-                          color: AppColors.peachLight,
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -128,29 +148,55 @@ class _RewashScreenState extends State<RewashScreen> {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline, color: AppColors.coralAccent, size: 24),
-                  tooltip: 'Add Custom Item',
-                  onPressed: () async {
-                    final newItem = await AppDialogs.showAddItemDialog(context);
-                    if (newItem != null && newItem.isNotEmpty) {
-                      setState(() {
-                        if (_selectedTabIndex == 0) {
-                          if (!_frenRewashItems.containsKey(newItem)) {
-                            _frenItemsList.add(newItem);
-                            _frenRewashItems[newItem] = 0;
-                            _frenRewashNotes[newItem] = '';
+                const SizedBox(width: 8),
+                Material(
+                  color: AppColors.surfaceCard,
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () async {
+                      final newItem = await AppDialogs.showAddItemDialog(context);
+                      if (newItem != null && newItem.isNotEmpty) {
+                        setState(() {
+                          if (_selectedTabIndex == 0) {
+                            if (!_frenRewashItems.containsKey(newItem)) {
+                              _frenItemsList.add(newItem);
+                              _frenRewashItems[newItem] = 0;
+                              _frenRewashNotes[newItem] = '';
+                            }
+                          } else {
+                            if (!_fastRewashItems.containsKey(newItem)) {
+                              _fastItemsList.add(newItem);
+                              _fastRewashItems[newItem] = 0;
+                              _fastRewashNotes[newItem] = '';
+                            }
                           }
-                        } else {
-                          if (!_fastRewashItems.containsKey(newItem)) {
-                            _fastItemsList.add(newItem);
-                            _fastRewashItems[newItem] = 0;
-                            _fastRewashNotes[newItem] = '';
-                          }
-                        }
-                      });
-                    }
-                  },
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppColors.surfaceGlassBorder),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add_rounded, color: AppColors.coralAccent, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            'Add item',
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -161,7 +207,7 @@ class _RewashScreenState extends State<RewashScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
             child: CustomSlidingTabBar(
               selectedIndex: _selectedTabIndex,
-              tabs: const ['FREN LINEN', 'FAST ITEMS'],
+              tabs: const ['Fren Linen', 'Fast Items'],
               itemCounts: [totalFrenRewash, totalFastRewash],
               onTabSelected: (index) {
                 setState(() {
@@ -174,7 +220,7 @@ class _RewashScreenState extends State<RewashScreen> {
 
           // Search Bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
             child: TextField(
               onChanged: (val) => setState(() => _searchQuery = val),
               style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
@@ -182,23 +228,23 @@ class _RewashScreenState extends State<RewashScreen> {
                 filled: true,
                 fillColor: AppColors.surfaceCard,
                 hintText: _selectedTabIndex == 0
-                    ? 'Search FREN rewash items...'
-                    : 'Search FAST rewash items...',
+                    ? 'Filter Fren rewash items...'
+                    : 'Filter Fast rewash items...',
                 hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
-                prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 20),
+                prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted, size: 19),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppColors.textMuted, size: 18),
+                        icon: const Icon(Icons.clear_rounded, color: AppColors.textMuted, size: 18),
                         onPressed: () => setState(() => _searchQuery = ''),
                       )
                     : null,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: AppColors.surfaceGlassBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: AppColors.surfaceGlassBorder),
                 ),
               ),
@@ -241,7 +287,7 @@ class _RewashScreenState extends State<RewashScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withOpacity(0.28),
                   blurRadius: 20,
                   offset: const Offset(0, -6),
                 ),
@@ -254,20 +300,21 @@ class _RewashScreenState extends State<RewashScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'TOTAL REWASH',
+                      'Total rewash',
                       style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textMuted,
-                        letterSpacing: 1.0,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       '$totalRewashPieces pcs',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.3,
                         color: AppColors.coralAccent,
+                        fontFeatures: [FontFeature.tabularFigures()],
                       ),
                     ),
                   ],
@@ -276,19 +323,19 @@ class _RewashScreenState extends State<RewashScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _navigateToSummary,
-                    icon: const Icon(Icons.arrow_forward_rounded, size: 20),
+                    icon: const Icon(Icons.arrow_forward_rounded, size: 18),
                     label: const Text(
-                      'Review & Export Rewash',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      'Review & Export',
+                      style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.brandMagenta,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      elevation: 4,
+                      elevation: 0,
                     ),
                   ),
                 ),

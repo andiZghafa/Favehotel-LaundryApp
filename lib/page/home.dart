@@ -1,3 +1,4 @@
+import 'dart:ui' show FontFeature;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import 'package:laundry_app/page/linen_form_screen.dart';
 import 'package:laundry_app/page/rewash_screen.dart';
 import 'package:laundry_app/theme/app_theme.dart';
 import 'package:laundry_app/widgets/app_background.dart';
+import 'package:laundry_app/widgets/brand_wordmark.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,10 +29,9 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 550),
     );
 
-    // Staggered entrances (better-ui / transitions-dev stagger rules)
     _headerFade = CurvedAnimation(
       parent: _animController,
       curve: const Interval(0.0, 0.45, curve: AppMotion.easeSmoothOut),
@@ -38,17 +39,17 @@ class _HomeScreenState extends State<HomeScreen>
 
     _card1Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.2, 0.65, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.18, 0.65, curve: AppMotion.easeSmoothOut),
     );
 
     _card2Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.35, 0.8, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.32, 0.80, curve: AppMotion.easeSmoothOut),
     );
 
     _card3Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.5, 0.95, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.46, 0.95, curve: AppMotion.easeSmoothOut),
     );
 
     _animController.forward();
@@ -66,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen>
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.06, 0.0);
+          const begin = Offset(0.05, 0.0);
           const end = Offset.zero;
           final tween = Tween(begin: begin, end: end).chain(
             CurveTween(curve: AppMotion.easeSmoothOut),
@@ -84,109 +85,99 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final formattedDate = DateFormat('EEEE, dd MMMM yyyy').format(now);
+    final formattedDate = DateFormat('EEE, d MMM yyyy').format(now);
 
     return AppBackground(
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 10),
-
-            // Header Section with Staggered Entrance
+            // Edge-aligned Top Masthead + Intro (Linear / Airbnb Workbench hierarchy)
             FadeTransition(
               opacity: _headerFade,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 110,
-                    height: 110,
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.brandMagenta.withOpacity(0.35),
-                          blurRadius: 30,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Image.asset(
-                      'assets/IKON.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.local_laundry_service,
-                        size: 55,
-                        color: AppColors.brandMagenta,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const BrandWordmark(
+                        width: 138,
+                        height: 40,
+                        borderRadius: 10,
                       ),
-                    ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceCard.withOpacity(0.75),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.14),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.calendar_today_outlined,
+                              size: 13,
+                              color: AppColors.coralAccent,
+                            ),
+                            const SizedBox(width: 7),
+                            Text(
+                              formattedDate,
+                              style: const TextStyle(
+                                fontSize: 12.5,
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                                fontFeatures: [FontFeature.tabularFigures()],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-
-                  const SizedBox(height: 20),
-
+                  const SizedBox(height: 28),
                   const Text(
-                    'HOUSEKEEPING',
+                    'Housekeeping Logbook',
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 2.0,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.6,
+                      height: 1.2,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   const Text(
-                    'LAUNDRY LOGBOOK MANAGEMENT',
+                    'Select a category to record clean linen handovers or log stained items for rewash.',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.8,
-                      color: AppColors.peachLight,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Date Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceCard.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.surfaceGlassBorder),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.coralAccent),
-                        const SizedBox(width: 8),
-                        Text(
-                          formattedDate,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      height: 1.45,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 36),
+            const SizedBox(height: 28),
 
-            // Category 1: FREN Card
+            // Category 1: Fren Linen
             FadeTransition(
               opacity: _card1Fade,
               child: _CategoryMenuCard(
-                title: '1. FREN',
-                subtitle: 'Bedding, Duvets, Sheets & Bath Linens',
-                itemCountSummary: '8 standard linen items',
+                title: 'Fren Linen',
+                subtitle: 'Duvet covers, bedsheets, pillowcases, bath towels, and batik cloth',
+                metaLabel: '8 items',
                 icon: Icons.king_bed_outlined,
                 accentColor: AppColors.brandMagenta,
                 onTap: () => _navigateTo(
@@ -196,17 +187,17 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // Category 2: FAST Card
+            // Category 2: Fast Items
             FadeTransition(
               opacity: _card2Fade,
               child: _CategoryMenuCard(
-                title: '2. FAST',
-                subtitle: 'F&B Linens, Mukena, Sejadah, Sarung & Flags',
-                itemCountSummary: '6 specialized items',
+                title: 'Fast Items',
+                subtitle: 'Bath mats, mukena, sejadah, sarung, and hotel flags',
+                metaLabel: '6 items',
                 icon: Icons.dry_cleaning_outlined,
-                accentColor: AppColors.purpleDeep,
+                accentColor: const Color(0xFF7B52AB),
                 onTap: () => _navigateTo(
                   context,
                   const LinenFormScreen(category: LinenCategory.fast),
@@ -214,18 +205,17 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // Category 3: REWASH Card (Standalone Category)
+            // Category 3: Rewash Station (Standalone Category)
             FadeTransition(
               opacity: _card3Fade,
               child: _CategoryMenuCard(
-                title: '3. REWASH',
-                subtitle: 'Dedicated Station for Stained & Defective Linens',
-                itemCountSummary: 'FREN & FAST stain logging',
+                title: 'Rewash Station',
+                subtitle: 'Log stained, discolored, or torn linens from Fren and Fast inventories',
+                metaLabel: 'Fren & Fast',
                 icon: Icons.autorenew_rounded,
                 accentColor: AppColors.coralAccent,
-                badgeText: 'STANDALONE',
                 onTap: () => _navigateTo(
                   context,
                   const RewashScreen(),
@@ -233,49 +223,109 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
 
-            // Exit App Button
-            TextButton.icon(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    backgroundColor: AppColors.surfaceCard,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    title: const Text('Exit Application', style: TextStyle(color: Colors.white)),
-                    content: const Text(
-                      'Are you sure you want to close the Housekeeping Logbook?',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                          SystemNavigator.pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.brandMagenta,
-                          foregroundColor: Colors.white,
+            // Subtle Footer / Exit Row
+            FadeTransition(
+              opacity: _card3Fade,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceCard.withOpacity(0.45),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.table_view_outlined,
+                          size: 16,
+                          color: AppColors.textMuted,
                         ),
-                        child: const Text('Exit'),
+                        SizedBox(width: 8),
+                        Text(
+                          'Exports directly to Excel (.xlsx)',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: AppColors.surfaceCard,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            title: const Text(
+                              'Close Logbook',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            content: const Text(
+                              'Are you sure you want to close the application?',
+                              style: TextStyle(color: AppColors.textSecondary),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(color: AppColors.textMuted),
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  SystemNavigator.pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.brandMagenta,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text('Exit'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        minimumSize: const Size(44, 36),
                       ),
-                    ],
-                  ),
-                );
-              },
-              icon: const Icon(Icons.exit_to_app_rounded, size: 18, color: AppColors.textMuted),
-              label: const Text(
-                'Exit App',
-                style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                      icon: const Icon(
+                        Icons.logout_rounded,
+                        size: 15,
+                        color: AppColors.textSecondary,
+                      ),
+                      label: const Text(
+                        'Close',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -286,19 +336,17 @@ class _HomeScreenState extends State<HomeScreen>
 class _CategoryMenuCard extends StatefulWidget {
   final String title;
   final String subtitle;
-  final String itemCountSummary;
+  final String metaLabel;
   final IconData icon;
   final Color accentColor;
-  final String? badgeText;
   final VoidCallback onTap;
 
   const _CategoryMenuCard({
     required this.title,
     required this.subtitle,
-    required this.itemCountSummary,
+    required this.metaLabel,
     required this.icon,
     required this.accentColor,
-    this.badgeText,
     required this.onTap,
   });
 
@@ -312,12 +360,13 @@ class _CategoryMenuCardState extends State<_CategoryMenuCard> {
 
   @override
   Widget build(BuildContext context) {
-    // Exact better-ui rule: Press scales to 0.96 over 150ms with ease-out
-    final double scale = _isPressed ? 0.96 : (_isHovered ? 1.015 : 1.0);
+    // make-interfaces-feel-better #12: Press scales to 0.96 over 150ms with ease-out
+    final double scale = _isPressed ? 0.96 : 1.0;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
@@ -330,115 +379,117 @@ class _CategoryMenuCardState extends State<_CategoryMenuCard> {
           child: AnimatedContainer(
             duration: AppMotion.quick,
             curve: AppMotion.easeSmoothOut,
+            // Concentric border radius: outer 20px, padding 18px, inner icon 12px
+            padding: const EdgeInsets.all(18.0),
             decoration: BoxDecoration(
-              color: _isHovered ? AppColors.surfaceCardLight : AppColors.surfaceCard,
-              borderRadius: BorderRadius.circular(24),
+              color: _isHovered
+                  ? AppColors.surfaceCardLight
+                  : AppColors.surfaceCard.withOpacity(0.92),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: _isHovered
-                    ? widget.accentColor.withOpacity(0.7)
-                    : AppColors.surfaceGlassBorder,
-                width: _isHovered ? 1.5 : 1.0,
+                    ? widget.accentColor.withOpacity(0.65)
+                    : Colors.white.withOpacity(0.12),
+                width: 1.0,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: _isHovered
-                      ? widget.accentColor.withOpacity(0.3)
-                      : Colors.black.withOpacity(0.2),
-                  blurRadius: _isHovered ? 24 : 16,
-                  offset: Offset(0, _isHovered ? 8 : 6),
+                  color: Colors.black.withOpacity(_isHovered ? 0.28 : 0.18),
+                  blurRadius: _isHovered ? 20 : 12,
+                  offset: Offset(0, _isHovered ? 6 : 4),
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  // Concentric Icon Avatar (R_outer = R_inner + padding)
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: widget.accentColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: widget.accentColor.withOpacity(0.5)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Concentric Icon Container (44x44 hit/visual box, radius 12)
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: widget.accentColor.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: widget.accentColor.withOpacity(0.45),
                     ),
-                    child: Icon(widget.icon, color: Colors.white, size: 26),
                   ),
-                  const SizedBox(width: 16),
+                  child: Icon(
+                    widget.icon,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 14),
 
-                  // Title and description
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
+                // Content column
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
                               widget.title,
                               style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 16.5,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
-                                letterSpacing: 0.5,
+                                letterSpacing: -0.2,
+                                height: 1.25,
                               ),
                             ),
-                            if (widget.badgeText != null) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: widget.accentColor.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: widget.accentColor, width: 0.8),
-                                ),
-                                child: Text(
-                                  widget.badgeText!,
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.bold,
-                                    color: widget.accentColor,
-                                    letterSpacing: 0.8,
-                                  ),
-                                ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.07),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              widget.metaLabel,
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
+                                fontFeatures: [FontFeature.tabularFigures()],
                               ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.subtitle,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
+                            ),
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        widget.subtitle,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                          height: 1.4,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          widget.itemCountSummary,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  const SizedBox(width: 8),
-                  AnimatedSlide(
+                const SizedBox(width: 10),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: AnimatedSlide(
                     duration: AppMotion.quick,
-                    offset: _isHovered ? const Offset(0.2, 0) : Offset.zero,
+                    offset: _isHovered ? const Offset(0.18, 0) : Offset.zero,
                     child: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 16,
-                      color: _isHovered ? AppColors.coralAccent : AppColors.textMuted,
+                      Icons.chevron_right_rounded,
+                      size: 20,
+                      color: _isHovered ? AppColors.textPrimary : AppColors.textMuted,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

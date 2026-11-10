@@ -17,6 +17,17 @@ extension LinenCategoryExtension on LinenCategory {
     }
   }
 
+  String get displayTitle {
+    switch (this) {
+      case LinenCategory.fren:
+        return 'Fren Linen';
+      case LinenCategory.fast:
+        return 'Fast Items';
+      case LinenCategory.rewash:
+        return 'Rewash Station';
+    }
+  }
+
   String get subtitle {
     switch (this) {
       case LinenCategory.fren:
