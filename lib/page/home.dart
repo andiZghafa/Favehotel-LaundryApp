@@ -1,395 +1,14 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:laundry_app/page/fast.dart';
-import 'package:laundry_app/page/fren.dart';
+import 'package:intl/intl.dart';
+import 'package:laundry_app/models/linen_models.dart';
+import 'package:laundry_app/page/linen_form_screen.dart';
+import 'package:laundry_app/page/rewash_screen.dart';
+import 'package:laundry_app/theme/app_theme.dart';
+import 'package:laundry_app/widgets/app_background.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  late AnimationController _mainController;
-  late AnimationController _pulseController;
-  late AnimationController _particleController;
-
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _slideAnimation;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _pulseAnimation;
-  late Animation<double> _rotateAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _mainController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    );
-
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2500),
-    );
-
-    _particleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4000),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _slideAnimation = Tween<double>(begin: 30, end: 0).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.0, 0.7, curve: Curves.elasticOut),
-      ),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 1, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-
-    _rotateAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _particleController, curve: Curves.linear),
-    );
-
-    _mainController.forward();
-    _pulseController.repeat(reverse: true);
-    _particleController.repeat();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1A0B2E),
-              Color(0xFF2D1B69),
-              Color(0xFF900C46),
-              Color(0xFFFF6B6B),
-            ],
-            stops: [0.0, 0.3, 0.7, 1.0],
-          ),
-        ),
-        child: Stack(
-          children: [
-            // Animated background particles
-            ...List.generate(
-              15,
-              (index) => AnimatedBuilder(
-                animation: _rotateAnimation,
-                builder: (context, child) {
-                  final angle =
-                      (_rotateAnimation.value * 2 * math.pi) + (index * 0.4);
-                  final radius = 80 + (index * 12);
-                  final x = screenWidth / 2 + radius * 0.6 * math.cos(angle);
-                  final y = screenHeight / 2 + radius * 0.4 * math.sin(angle);
-
-                  return Positioned(
-                    left: x,
-                    top: y,
-                    child: Opacity(
-                      opacity: 0.1 + (index % 3) * 0.03,
-                      child: Container(
-                        width: 3 + (index % 3),
-                        height: 3 + (index % 3),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.2),
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            // Main content
-            SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: AnimatedBuilder(
-                      animation: _mainController,
-                      builder: (context, child) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 40),
-
-                            // Logo section
-                            Transform.translate(
-                              offset: Offset(0, _slideAnimation.value),
-                              child: Opacity(
-                                opacity: _fadeAnimation.value,
-                                child: Transform.scale(
-                                  scale: _scaleAnimation.value,
-                                  child: _buildLogo(context),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 50),
-
-                            // Menu section
-                            Transform.translate(
-                              offset: Offset(0, _slideAnimation.value * 0.5),
-                              child: Opacity(
-                                opacity: _fadeAnimation.value,
-                                child: _buildMenuCard(context),
-                              ),
-                            ),
-
-                            const SizedBox(height: 40),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLogo(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _pulseAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _pulseAnimation.value,
-          child: Column(
-            children: [
-              Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withOpacity(0.9),
-                      Colors.white.withOpacity(0.7),
-                    ],
-                  ),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.8),
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF900C46).withOpacity(0.4),
-                      blurRadius: 30,
-                      spreadRadius: 5,
-                    ),
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
-                      blurRadius: 15,
-                      spreadRadius: 2,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Image.asset(
-                    'assets/IKON.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.hotel,
-                        size: 60,
-                        color: Color(0xFF900C46),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              ShaderMask(
-                shaderCallback:
-                    (bounds) => const LinearGradient(
-                      colors: [Colors.white, Color(0xFFFFE4E1), Colors.white],
-                    ).createShader(bounds),
-                child: const Text(
-                  'HOUSEKEEPING LOGBOOK',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildMenuCard(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.9,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.25),
-            Colors.white.withOpacity(0.1),
-          ],
-        ),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-          BoxShadow(
-            color: Colors.white.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildMenuButton(
-            text: 'FREN',
-            icon: Icons.checklist_rounded,
-            onPressed: () => _navigateTo(context, FrenScreen()),
-            isPrimary: true,
-          ),
-          const SizedBox(height: 20),
-          _buildMenuButton(
-            text: 'FAST',
-            icon: Icons.supervisor_account_rounded,
-            onPressed: () => _navigateTo(context, FastScreen()),
-            isPrimary: true,
-          ),
-          const SizedBox(height: 20),
-          _buildMenuButton(
-            text: 'EXIT',
-            icon: Icons.exit_to_app_rounded,
-            onPressed: () => SystemNavigator.pop(),
-            isPrimary: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMenuButton({
-    required String text,
-    required IconData icon,
-    required VoidCallback onPressed,
-    required bool isPrimary,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient:
-              isPrimary
-                  ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [const Color(0xFF900C46), const Color(0xFF7A0A3C)],
-                  )
-                  : null,
-          border:
-              !isPrimary
-                  ? Border.all(color: Colors.white.withOpacity(0.6), width: 2)
-                  : null,
-          boxShadow: [
-            BoxShadow(
-              color:
-                  isPrimary
-                      ? const Color(0xFF900C46).withOpacity(0.4)
-                      : Colors.white.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            elevation: 0,
-            shadowColor: Colors.transparent,
-          ),
-          onPressed: onPressed,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 26),
-              const SizedBox(width: 16),
-              Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   void _navigateTo(BuildContext context, Widget screen) {
     Navigator.push(
@@ -397,26 +16,334 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(parent: animation, curve: Curves.elasticOut),
-            ),
-            child: FadeTransition(opacity: animation, child: child),
+          const begin = Offset(0.08, 0.0);
+          const end = Offset.zero;
+          final tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: AppMotion.easeSmoothOut),
+          );
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(position: animation.drive(tween), child: child),
           );
         },
-        transitionDuration: const Duration(milliseconds: 800),
+        transitionDuration: AppMotion.fast,
       ),
     );
   }
 
   @override
-  void dispose() {
-    _mainController.dispose();
-    _pulseController.dispose();
-    _particleController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final formattedDate = DateFormat('EEEE, dd MMMM yyyy').format(now);
+
+    return AppBackground(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+
+            // Logo & Header Section
+            Container(
+              width: 110,
+              height: 110,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.95),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.brandMagenta.withOpacity(0.35),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Image.asset(
+                'assets/IKON.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.local_laundry_service,
+                  size: 55,
+                  color: AppColors.brandMagenta,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              'HOUSEKEEPING',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 2.0,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'LAUNDRY LOGBOOK MANAGEMENT',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.8,
+                color: AppColors.peachLight,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Date Badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceCard.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.surfaceGlassBorder),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.calendar_today_outlined, size: 14, color: AppColors.coralAccent),
+                  const SizedBox(width: 8),
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 36),
+
+            // Category 1: FREN Card
+            _CategoryMenuCard(
+              title: '1. FREN',
+              subtitle: 'Bedding, Duvets, Sheets & Bath Linens',
+              itemCountSummary: '8 standard linen items',
+              icon: Icons.king_bed_outlined,
+              accentColor: AppColors.brandMagenta,
+              onTap: () => _navigateTo(
+                context,
+                const LinenFormScreen(category: LinenCategory.fren),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Category 2: FAST Card
+            _CategoryMenuCard(
+              title: '2. FAST',
+              subtitle: 'F&B Linens, Mukena, Sejadah, Sarung & Flags',
+              itemCountSummary: '6 specialized items',
+              icon: Icons.dry_cleaning_outlined,
+              accentColor: AppColors.purpleDeep,
+              onTap: () => _navigateTo(
+                context,
+                const LinenFormScreen(category: LinenCategory.fast),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Category 3: REWASH Card (Standalone Category)
+            _CategoryMenuCard(
+              title: '3. REWASH',
+              subtitle: 'Dedicated Station for Stained & Defective Linens',
+              itemCountSummary: 'FREN & FAST stain logging',
+              icon: Icons.autorenew_rounded,
+              accentColor: AppColors.coralAccent,
+              badgeText: 'STANDALONE',
+              onTap: () => _navigateTo(
+                context,
+                const RewashScreen(),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Exit App / Information Button
+            TextButton.icon(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    backgroundColor: AppColors.surfaceCard,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    title: const Text('Exit Application', style: TextStyle(color: Colors.white)),
+                    content: const Text(
+                      'Are you sure you want to close the Housekeeping Logbook?',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          SystemNavigator.pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.brandMagenta,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Exit'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: const Icon(Icons.exit_to_app_rounded, size: 18, color: AppColors.textMuted),
+              label: const Text(
+                'Exit App',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryMenuCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String itemCountSummary;
+  final IconData icon;
+  final Color accentColor;
+  final String? badgeText;
+  final VoidCallback onTap;
+
+  const _CategoryMenuCard({
+    required this.title,
+    required this.subtitle,
+    required this.itemCountSummary,
+    required this.icon,
+    required this.accentColor,
+    this.badgeText,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceCard,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.surfaceGlassBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                // Icon Avatar
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: accentColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: accentColor.withOpacity(0.5)),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 26),
+                ),
+                const SizedBox(width: 16),
+
+                // Title and description
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          if (badgeText != null) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: accentColor.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: accentColor, width: 0.8),
+                              ),
+                              child: Text(
+                                badgeText!,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: accentColor,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        itemCountSummary,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: AppColors.textMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

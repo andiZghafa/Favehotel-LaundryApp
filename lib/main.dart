@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:laundry_app/page/splash.dart';
+import 'package:laundry_app/theme/app_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -11,11 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Housekeeping Laundry Logbook',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Poppins',
-        primaryColor: const Color(0xFF900C46),
-      ),
+      theme: AppTheme.darkTheme,
       home: const SplashScreen(),
     );
   }
