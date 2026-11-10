@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/d3d3d3" /> <!-- Light gray background -->
+    <item>
+        <bitmap
+            android:src="@drawable/logo"  <!-- assets\IKONT.png -->
+            android:gravity="center" />
+    </item>
+</layer-list>
