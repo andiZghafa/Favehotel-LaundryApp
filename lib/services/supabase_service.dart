@@ -68,8 +68,21 @@ class SupabaseService {
 
   static const String defaultPin = String.fromEnvironment(
     'HOTEL_PIN',
-    defaultValue: '0925',
+    defaultValue: 'fave0925',
   );
+
+  /// Auto-detects whether Supabase sync should be active.
+  /// On your portfolio domain (andiportofolio.my.id), cloud DB writes are disabled
+  /// so visitors never pollute real hotel logs.
+  static bool get isDatabaseSyncEnabled {
+    if (kIsWeb) {
+      final host = Uri.base.host.toLowerCase();
+      if (host.contains('andiportofolio.my.id')) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   static Map<String, String> get _headers => {
         'apikey': anonKey,
@@ -85,6 +98,12 @@ class SupabaseService {
     required Map<String, String> notes,
     Map<String, int>? secondaryItems,
   }) async {
+    // If running under portfolio showcase domain, safely skip DB persistence
+    if (!isDatabaseSyncEnabled) {
+      if (kDebugMode) print('Portfolio Demo Mode: Supabase sync skipped.');
+      return true;
+    }
+
     try {
       final cleanItems = <String, int>{};
       items.forEach((k, v) {

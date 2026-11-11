@@ -105,8 +105,9 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
     });
 
     // Valid check: Check against default PIN or query Supabase
-    final bool isKnownPin =
-        cleanPin == SupabaseService.defaultPin || cleanPin == '0925';
+    final bool isKnownPin = cleanPin == SupabaseService.defaultPin ||
+        cleanPin.toLowerCase() == 'fave0925' ||
+        cleanPin == '0925';
 
     final logs = await SupabaseService.fetchMonthlyLogs(
       pin: cleanPin,
@@ -127,7 +128,7 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
         setState(() {
           _isLoading = false;
           _errorMessage =
-              'PIN salah. Sisa kesempatan: $remaining kali sebelum terkunci.';
+              'Passcode salah. Sisa kesempatan: $remaining kali sebelum terkunci.';
         });
       }
       return;
@@ -514,26 +515,26 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                   const SizedBox(height: 16),
                 ],
 
-                // PIN Input
+                // Passcode Input (Alphanumeric, e.g. fave0925)
                 TextField(
                   controller: _pinController,
                   enabled: !isLocked && !_isLoading,
                   obscureText: true,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   textAlign: TextAlign.center,
-                  maxLength: 6,
+                  maxLength: 16,
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 10,
+                    letterSpacing: 4,
                     color: AppColors.brandMagenta,
-                    fontFeatures: [FontFeature.tabularFigures()],
                   ),
                   decoration: InputDecoration(
                     counterText: '',
-                    hintText: '• • • •',
+                    hintText: 'Passcode Hotel',
                     hintStyle: const TextStyle(
-                      letterSpacing: 6,
+                      letterSpacing: 1,
+                      fontSize: 14,
                       color: AppColors.textMuted,
                     ),
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
