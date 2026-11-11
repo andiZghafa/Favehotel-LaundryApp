@@ -29,32 +29,31 @@ class LinenCounterCard extends StatelessWidget {
     return AnimatedContainer(
       duration: AppMotion.quick,
       curve: AppMotion.easeSmoothOut,
-      margin: const EdgeInsets.only(bottom: 10),
-      // Concentric border radius: outer 18px, padding 14px, inner controls 10px
-      padding: const EdgeInsets.all(14.0),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: hasCount
-            ? AppColors.surfaceCardLight
-            : AppColors.surfaceCard.withOpacity(0.88),
-        borderRadius: BorderRadius.circular(18),
+        color: AppColors.surfaceCard,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: hasCount
-              ? AppColors.coralAccent.withOpacity(0.45)
-              : Colors.white.withOpacity(0.10),
-          width: 1.0,
+              ? AppColors.brandMagenta.withOpacity(0.35)
+              : AppColors.hairline,
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(hasCount ? 0.24 : 0.14),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: hasCount
+                ? AppColors.brandMagenta.withOpacity(0.06)
+                : const Color(0x04000000),
+            blurRadius: hasCount ? 12 : 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row 1: Item Name + Note Action
+          // Row 1: Item Name & Note Trigger
           Row(
             children: [
               Expanded(
@@ -62,57 +61,60 @@ class LinenCounterCard extends StatelessWidget {
                   itemName,
                   style: TextStyle(
                     fontSize: 15.5,
-                    fontWeight: hasCount ? FontWeight.w600 : FontWeight.w500,
-                    letterSpacing: -0.15,
+                    fontWeight: hasCount ? FontWeight.w700 : FontWeight.w600,
+                    letterSpacing: -0.2,
                     color: AppColors.textPrimary,
                   ),
                 ),
               ),
-              // Note Icon Button with badge indicator
-              InkWell(
-                onTap: () async {
-                  final res = await AppDialogs.showNotesDialog(
-                    context: context,
-                    itemName: itemName,
-                    initialNote: note,
-                    isRewash: isRewash,
-                  );
-                  if (res != null) {
-                    onNoteChanged(res);
-                  }
-                },
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: hasNote
-                        ? AppColors.coralAccent.withOpacity(0.18)
-                        : Colors.white.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
+              // Note trigger pill
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () async {
+                    final res = await AppDialogs.showNotesDialog(
+                      context: context,
+                      itemName: itemName,
+                      initialNote: note,
+                      isRewash: isRewash,
+                    );
+                    if (res != null) {
+                      onNoteChanged(res);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
                       color: hasNote
-                          ? AppColors.coralAccent.withOpacity(0.55)
-                          : Colors.white.withOpacity(0.08),
+                          ? AppColors.coralDim
+                          : AppColors.surfacePill,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: hasNote
+                            ? AppColors.coralAccent.withOpacity(0.3)
+                            : AppColors.hairline,
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        hasNote ? Icons.sticky_note_2_outlined : Icons.edit_note_rounded,
-                        size: 16,
-                        color: hasNote ? AppColors.peachLight : AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        hasNote ? 'Edit note' : (isRewash ? 'Stain note' : 'Note'),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: hasNote ? AppColors.peachLight : AppColors.textSecondary,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          hasNote ? Icons.sticky_note_2_rounded : Icons.edit_note_rounded,
+                          size: 15,
+                          color: hasNote ? AppColors.coralAccent : AppColors.textSecondary,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        Text(
+                          hasNote ? 'Note added' : (isRewash ? '+ Stain note' : '+ Note'),
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: hasNote ? AppColors.coralAccent : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -123,16 +125,18 @@ class LinenCounterCard extends StatelessWidget {
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.plumDark.withOpacity(0.55),
-                borderRadius: BorderRadius.circular(8),
+                color: AppColors.coralDim,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.coralAccent.withOpacity(0.2)),
               ),
               child: Text(
                 note,
                 style: const TextStyle(
                   fontSize: 12.5,
-                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.coralAccent,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -140,32 +144,35 @@ class LinenCounterCard extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
-          // Row 2: Quick Add Chips + Stepper
+          // Row 2: Quick-Add Chips & Stepper Control
           Row(
             children: [
-              // Quick chips: +1, +5, +10
+              // Quick-add pill chips (+1, +5, +10)
               Wrap(
                 spacing: 6,
                 children: [1, 5, 10].map((step) {
-                  return InkWell(
-                    onTap: () => onCountChanged(count + step),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.06),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white.withOpacity(0.12)),
-                      ),
-                      child: Text(
-                        '+$step',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onCountChanged(count + step),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfacePill,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppColors.hairline),
+                        ),
+                        child: Text(
+                          '+$step',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textSecondary,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
                         ),
                       ),
                     ),
@@ -175,22 +182,22 @@ class LinenCounterCard extends StatelessWidget {
 
               const Spacer(),
 
-              // Stepper: [-] [Count] [+]
+              // Stepper: [-] [Count] [+] with Emil Kowalski press feedback
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceInput,
+                  color: AppColors.surfacePill,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.14)),
+                  border: Border.all(color: AppColors.hairline),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _CounterIconButton(
+                    _StepButton(
                       icon: Icons.remove_rounded,
                       onPressed: count > 0 ? () => onCountChanged(count - 1) : null,
                     ),
 
-                    // Tappable count display with tabular numerals
+                    // Tappable count display
                     InkWell(
                       onTap: () async {
                         final res = await AppDialogs.showQuantityDialog(
@@ -203,22 +210,21 @@ class LinenCounterCard extends StatelessWidget {
                         }
                       },
                       child: Container(
-                        constraints: const BoxConstraints(minWidth: 44),
+                        constraints: const BoxConstraints(minWidth: 46),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         alignment: Alignment.center,
                         child: AnimatedSwitcher(
                           duration: AppMotion.quick,
-                          transitionBuilder: (child, anim) {
-                            return ScaleTransition(scale: anim, child: child);
-                          },
+                          transitionBuilder: (child, anim) =>
+                              ScaleTransition(scale: anim, child: child),
                           child: Text(
                             '$count',
                             key: ValueKey<int>(count),
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.5,
                               fontWeight: FontWeight.w700,
                               color: hasCount
-                                  ? AppColors.coralAccent
+                                  ? AppColors.brandMagenta
                                   : AppColors.textMuted,
                               fontFeatures: const [FontFeature.tabularFigures()],
                             ),
@@ -227,7 +233,7 @@ class LinenCounterCard extends StatelessWidget {
                       ),
                     ),
 
-                    _CounterIconButton(
+                    _StepButton(
                       icon: Icons.add_rounded,
                       onPressed: () => onCountChanged(count + 1),
                     ),
@@ -242,11 +248,11 @@ class LinenCounterCard extends StatelessWidget {
   }
 }
 
-class _CounterIconButton extends StatelessWidget {
+class _StepButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
 
-  const _CounterIconButton({
+  const _StepButton({
     required this.icon,
     this.onPressed,
   });
@@ -268,7 +274,7 @@ class _CounterIconButton extends StatelessWidget {
             size: 18,
             color: isEnabled
                 ? AppColors.textPrimary
-                : AppColors.textMuted.withOpacity(0.35),
+                : AppColors.textDisabled,
           ),
         ),
       ),

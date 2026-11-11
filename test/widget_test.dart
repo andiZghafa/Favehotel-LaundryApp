@@ -5,5 +5,6 @@ void main() {
   testWidgets('App boots and renders splash screen header', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
     expect(find.text('Housekeeping Logbook'), findsOneWidget);
+    await tester.pumpAndSettle();
   });
 }

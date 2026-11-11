@@ -23,12 +23,12 @@ class AppDialogs {
             decoration: BoxDecoration(
               color: AppColors.surfaceCard,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.surfaceGlassBorder),
+              border: Border.all(color: AppColors.hairline),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.black45,
-                  blurRadius: 30,
-                  offset: Offset(0, 15),
+                  color: Color(0x180F172A),
+                  blurRadius: 32,
+                  offset: Offset(0, 16),
                 ),
               ],
             ),
@@ -44,7 +44,8 @@ class AppDialogs {
                         itemName,
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.3,
                           color: AppColors.textPrimary,
                         ),
                         maxLines: 1,
@@ -52,7 +53,7 @@ class AppDialogs {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: AppColors.textMuted),
+                      icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
                       onPressed: () => Navigator.pop(ctx),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -64,6 +65,7 @@ class AppDialogs {
                   'Enter Quantity',
                   style: TextStyle(
                     fontSize: 13,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -74,7 +76,7 @@ class AppDialogs {
                   autofocus: true,
                   style: const TextStyle(
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                   ),
                   decoration: InputDecoration(
@@ -84,12 +86,16 @@ class AppDialogs {
                     hintStyle: const TextStyle(color: AppColors.textMuted),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColors.surfaceGlassBorder),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.hairline),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.hairline),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColors.coralAccent, width: 2),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.brandMagenta, width: 2),
                     ),
                   ),
                 ),
@@ -101,9 +107,9 @@ class AppDialogs {
                         onPressed: () => Navigator.pop(ctx, 0),
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          foregroundColor: AppColors.textMuted,
+                          foregroundColor: AppColors.textSecondary,
                         ),
-                        child: const Text('Clear to 0'),
+                        child: const Text('Reset to 0'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -118,13 +124,13 @@ class AppDialogs {
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 0,
                         ),
                         child: const Text(
                           'Save',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
@@ -164,12 +170,12 @@ class AppDialogs {
                 decoration: BoxDecoration(
                   color: AppColors.surfaceCard,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: AppColors.surfaceGlassBorder),
+                  border: Border.all(color: AppColors.hairline),
                   boxShadow: const [
                     BoxShadow(
-                      color: Colors.black45,
-                      blurRadius: 30,
-                      offset: Offset(0, 15),
+                      color: Color(0x180F172A),
+                      blurRadius: 32,
+                      offset: Offset(0, 16),
                     ),
                   ],
                 ),
@@ -185,7 +191,8 @@ class AppDialogs {
                             isRewash ? 'Rewash Note: $itemName' : 'Note: $itemName',
                             style: const TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
                               color: AppColors.textPrimary,
                             ),
                             maxLines: 1,
@@ -193,7 +200,7 @@ class AppDialogs {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close, color: AppColors.textMuted),
+                          icon: const Icon(Icons.close_rounded, color: AppColors.textMuted),
                           onPressed: () => Navigator.pop(ctx),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -203,7 +210,11 @@ class AppDialogs {
                     const SizedBox(height: 14),
                     const Text(
                       'Quick Tags:',
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
@@ -224,13 +235,17 @@ class AppDialogs {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: AppColors.purpleDeep.withOpacity(0.5),
+                              color: AppColors.coralDim,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.coralAccent.withOpacity(0.3)),
+                              border: Border.all(color: AppColors.coralAccent.withOpacity(0.2)),
                             ),
                             child: Text(
                               '+ $tag',
-                              style: const TextStyle(fontSize: 11, color: AppColors.peachLight),
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.coralAccent,
+                              ),
                             ),
                           ),
                         );
@@ -248,12 +263,16 @@ class AppDialogs {
                         hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
                         contentPadding: const EdgeInsets.all(14),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: AppColors.surfaceGlassBorder),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.hairline),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.hairline),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: AppColors.coralAccent, width: 2),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.brandMagenta, width: 2),
                         ),
                       ),
                     ),
@@ -265,7 +284,7 @@ class AppDialogs {
                             onPressed: () => Navigator.pop(ctx, ''),
                             style: TextButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              foregroundColor: AppColors.textMuted,
+                              foregroundColor: AppColors.textSecondary,
                             ),
                             child: const Text('Clear Note'),
                           ),
@@ -279,11 +298,11 @@ class AppDialogs {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 0,
                             ),
-                            child: const Text('Done', style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: const Text('Done', style: TextStyle(fontWeight: FontWeight.w700)),
                           ),
                         ),
                       ],
@@ -313,7 +332,14 @@ class AppDialogs {
             decoration: BoxDecoration(
               color: AppColors.surfaceCard,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.surfaceGlassBorder),
+              border: Border.all(color: AppColors.hairline),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x180F172A),
+                  blurRadius: 32,
+                  offset: Offset(0, 16),
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -323,7 +349,8 @@ class AppDialogs {
                   'Add Custom Item',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.3,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -335,16 +362,20 @@ class AppDialogs {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: AppColors.surfaceInput,
-                    hintText: 'e.g. Pillow Insert, Floor Towel...',
+                    hintText: 'e.g. Pillow Insert, Pool Towel...',
                     hintStyle: const TextStyle(color: AppColors.textMuted),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColors.surfaceGlassBorder),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.hairline),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.hairline),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColors.coralAccent, width: 2),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.brandMagenta, width: 2),
                     ),
                   ),
                 ),
@@ -354,7 +385,7 @@ class AppDialogs {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+                      child: const Text('Cancel', style: TextStyle(color: AppColors.textSecondary)),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -367,11 +398,12 @@ class AppDialogs {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.brandMagenta,
                         foregroundColor: Colors.white,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text('Add'),
+                      child: const Text('Add Item', style: TextStyle(fontWeight: FontWeight.w700)),
                     ),
                   ],
                 ),

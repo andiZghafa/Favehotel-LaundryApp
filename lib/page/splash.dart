@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:laundry_app/page/home.dart';
 import 'package:laundry_app/theme/app_theme.dart';
@@ -16,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
   late Animation<Offset> _slideAnim;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -31,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.06),
+      begin: const Offset(0, 0.05),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -40,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    _timer = Timer(const Duration(milliseconds: 1500), () {
       if (mounted) _navigateToHome();
     });
   }
@@ -60,6 +62,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -70,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen>
       onTap: _navigateToHome,
       child: AppBackground(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(28, 36, 28, 32),
+          padding: const EdgeInsets.fromLTRB(32, 40, 32, 36),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -83,54 +86,50 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Logo — white background, clean horizontal pill
-                      const BrandWordmark(
-                        width: 160,
-                        height: 46,
-                        borderRadius: 9,
-                      ),
-                      const SizedBox(height: 28),
+                      // Naked, unboxed brand wordmark
+                      const BrandWordmark(height: 48),
+                      const SizedBox(height: 32),
 
-                      // Display headline — Linear `{typography.display-md}` adapted
+                      // Display headline
                       const Text(
-                        'Laundry\nLogbook',
+                        'Housekeeping Logbook',
                         style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -1.4,
-                          height: 1.08,
+                          fontSize: 34,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -1.0,
+                          height: 1.15,
                           color: AppColors.textPrimary,
                         ),
                       ),
 
                       const SizedBox(height: 12),
 
-                      // Lead body
+                      // Subhead
                       const Text(
-                        'Daily linen inventory, F&B fabrics,\nand stain rewash tracking.',
+                        'Daily linen inventory, F&B fabrics,\nand standalone stain rewash station.',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 15.5,
                           fontWeight: FontWeight.w400,
-                          height: 1.55,
+                          height: 1.5,
                           color: AppColors.textSecondary,
                         ),
                       ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 36),
 
-                      // Progress bar — Linear hairline style
+                      // Minimal progress indicator
                       SizedBox(
-                        width: 120,
+                        width: 140,
                         child: AnimatedBuilder(
                           animation: _controller,
                           builder: (context, _) => ClipRRect(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(3),
                             child: LinearProgressIndicator(
                               value: _controller.value,
-                              minHeight: 2,
+                              minHeight: 3,
                               backgroundColor: AppColors.hairline,
                               valueColor: const AlwaysStoppedAnimation<Color>(
-                                AppColors.coralAccent,
+                                AppColors.brandMagenta,
                               ),
                             ),
                           ),
@@ -146,13 +145,19 @@ class _SplashScreenState extends State<SplashScreen>
               // Property footer
               FadeTransition(
                 opacity: _fadeAnim,
-                child: const Text(
-                  'favehotel Padjajaran Bogor',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textMuted,
-                    letterSpacing: 0,
-                  ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.hotel_rounded, size: 16, color: AppColors.brandMagenta),
+                    SizedBox(width: 8),
+                    Text(
+                      'favehotel Padjajaran Bogor',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

@@ -1,3 +1,4 @@
+import 'dart:ui' show FontFeature;
 import 'package:flutter/material.dart';
 import 'package:laundry_app/page/home.dart';
 import 'package:laundry_app/services/excel_service.dart';
@@ -141,28 +142,35 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
     return AppBackground(
       child: Column(
         children: [
-          // Top Workbench Header Bar
+          // Top Header Bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
             child: Row(
               children: [
                 Material(
                   color: AppColors.surfaceCard,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      width: 38,
-                      height: 38,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.surfaceGlassBorder),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.hairline),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x04000000),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: const Icon(
                         Icons.arrow_back_rounded,
                         color: AppColors.textPrimary,
-                        size: 18,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -175,17 +183,17 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                       const Text(
                         'Review & Export',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.35,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.4,
                           color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 1),
                       Text(
-                        '$_friendlyCategoryLabel worksheet',
+                        '$_friendlyCategoryLabel summary worksheet',
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 12.5,
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -204,19 +212,25 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Total stats banner (Concentric outer radius = 20, padding = 18, inner = 12)
+                  // Total stats banner (favehotel gradient)
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
-                          AppColors.brandMagenta.withOpacity(0.92),
-                          AppColors.brandMagentaDark.withOpacity(0.95),
+                          AppColors.brandMagenta,
+                          AppColors.brandMagentaDark,
                         ],
                       ),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.14)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.brandMagenta.withOpacity(0.25),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,16 +242,16 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                               _friendlyCategoryLabel,
                               style: const TextStyle(
                                 fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
                                 color: AppColors.peachLight,
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 3),
                             const Text(
-                              'Total items logged',
+                              'Total Items Logged',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.2,
                                 color: Colors.white,
                               ),
@@ -247,16 +261,16 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.16),
+                            color: Colors.white.withOpacity(0.18),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withOpacity(0.28)),
+                            border: Border.all(color: Colors.white.withOpacity(0.3)),
                           ),
                           child: Text(
                             '$totalPieces pcs',
                             style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.3,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.4,
                               color: Colors.white,
                               fontFeatures: [FontFeature.tabularFigures()],
                             ),
@@ -268,26 +282,33 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
 
                   const SizedBox(height: 18),
 
-                  // Handler Name Card (Concentric outer = 20, padding = 18, inner = 12)
+                  // Handler Name Card
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceCard,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.surfaceGlassBorder),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.hairline),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x04000000),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.person_outline_rounded, color: AppColors.coralAccent, size: 18),
+                            Icon(Icons.person_pin_rounded, color: AppColors.brandMagenta, size: 20),
                             SizedBox(width: 8),
                             Text(
-                              'Housekeeping handler',
+                              'Housekeeping Handler',
                               style: TextStyle(
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: -0.2,
                                 color: AppColors.textPrimary,
                               ),
@@ -303,15 +324,19 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                             fillColor: AppColors.surfaceInput,
                             hintText: 'Enter staff name (e.g. Budi, Siti)...',
                             hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13.5),
-                            prefixIcon: const Icon(Icons.badge_outlined, color: AppColors.textMuted, size: 19),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                            prefixIcon: const Icon(Icons.badge_outlined, color: AppColors.textMuted, size: 20),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: AppColors.surfaceGlassBorder),
+                              borderSide: const BorderSide(color: AppColors.hairline),
                             ),
-                            focusedBorder: OutlineInputBorder(
+                            enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: AppColors.coralAccent, width: 1.5),
+                              borderSide: const BorderSide(color: AppColors.hairline),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(12)),
+                              borderSide: BorderSide(color: AppColors.brandMagenta, width: 2),
                             ),
                           ),
                         ),
@@ -326,17 +351,24 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceCard,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.surfaceGlassBorder),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.hairline),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x04000000),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.isRewash ? 'Fren Linen Rewash' : 'Item breakdown',
+                          widget.isRewash ? 'Fren Linen Rewash' : 'Item Breakdown',
                           style: const TextStyle(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,
                             color: AppColors.textPrimary,
                           ),
@@ -344,9 +376,9 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                         const SizedBox(height: 12),
                         if (activeEntries.isEmpty)
                           const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 6.0),
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
                             child: Text(
-                              'No items logged in this group.',
+                              'No items logged in this category.',
                               style: TextStyle(color: AppColors.textMuted, fontSize: 13),
                             ),
                           )
@@ -357,12 +389,12 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                           }),
 
                         if (widget.isRewash) ...[
-                          const Divider(color: AppColors.surfaceGlassBorder, height: 28),
+                          const Divider(color: AppColors.hairline, height: 28),
                           const Text(
                             'Fast Items Rewash',
                             style: TextStyle(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: -0.2,
                               color: AppColors.textPrimary,
                             ),
@@ -370,9 +402,9 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                           const SizedBox(height: 12),
                           if (activeSecondaryEntries.isEmpty)
                             const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6.0),
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
-                                'No items logged in this group.',
+                                'No items logged in this category.',
                                 style: TextStyle(color: AppColors.textMuted, fontSize: 13),
                               ),
                             )
@@ -392,9 +424,9 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.statusSuccess.withOpacity(0.14),
+                        color: const Color(0xFFECFDF5),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.statusSuccess.withOpacity(0.6)),
+                        border: Border.all(color: const Color(0xFFA7F3D0)),
                       ),
                       child: Row(
                         children: [
@@ -405,19 +437,19 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Export complete',
+                                  'Excel Export Complete',
                                   style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF065F46),
+                                    fontSize: 14.5,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   _lastResult!.message,
                                   style: const TextStyle(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 12,
+                                    color: Color(0xFF047857),
+                                    fontSize: 12.5,
                                   ),
                                 ),
                               ],
@@ -444,10 +476,10 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                             )
                           : const Icon(Icons.file_download_outlined, size: 20),
                       label: Text(
-                        _isExporting ? 'Generating Excel...' : 'Export to Excel (.xlsx)',
+                        _isExporting ? 'Generating Excel File...' : 'Export to Excel (.xlsx)',
                         style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -477,8 +509,8 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                       },
                       icon: const Icon(Icons.home_outlined, color: AppColors.textSecondary, size: 18),
                       label: const Text(
-                        'Return to Home',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 13.5),
+                        'Return to Home Dashboard',
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 13.5, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -518,6 +550,7 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                     note,
                     style: const TextStyle(
                       fontSize: 12,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.coralAccent,
                     ),
                   ),
@@ -525,15 +558,16 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.surfaceInput,
+              color: AppColors.surfacePill,
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.hairline),
             ),
             child: Text(
               '$qty',
               style: const TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontSize: 13.5,
                 color: AppColors.textPrimary,
                 fontFeatures: [FontFeature.tabularFigures()],

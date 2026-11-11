@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       title: 'Housekeeping Laundry Logbook',
       debugShowCheckedModeBanner: false,
       scrollBehavior: const AppScrollBehavior(),
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       home: const SplashScreen(),
     );
   }

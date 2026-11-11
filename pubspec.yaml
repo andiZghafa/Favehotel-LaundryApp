@@ -73,6 +73,7 @@ flutter:
   assets:
     - assets/icon.png
     - assets/IKON.png
+    - assets/logo_clean.png
 
 flutter_icons:
   android: true

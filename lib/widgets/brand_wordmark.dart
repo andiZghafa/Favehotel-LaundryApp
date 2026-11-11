@@ -1,58 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:laundry_app/theme/app_theme.dart';
 
-/// Displays the favehotel wordmark from `assets/IKON.png`.
-///
-/// The source PNG is 200×200 with ~70% vertical dead-white space baked in.
-/// BoxFit.cover on a wide/short container crops the top+bottom white margins
-/// and reveals just the wordmark row — the aspect ratio maths:
-///   container 200×56  →  scale = 200/200 = 1.0  →  full width, centered crop
-///   shows the middle 56px of the 200px original (y≈72..128) which is the wordmark.
+/// Clean, unboxed favehotel brand wordmark.
+/// Renders directly onto the canvas with NO background box, NO border, and NO shadow.
+/// Uses the high-resolution cropped transparent asset `assets/logo_clean.png`.
 class BrandWordmark extends StatelessWidget {
-  final double width;
+  final double? width;
   final double height;
-  final double borderRadius;
 
   const BrandWordmark({
     super.key,
-    this.width = 200,
-    this.height = 56,
-    this.borderRadius = 10,
+    this.width,
+    this.height = 36,
+    double? borderRadius, // kept for signature compatibility
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
+    return Image.asset(
+      'assets/logo_clean.png',
       height: height,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.20),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Image.asset(
-        'assets/IKON.png',
-        // cover: fills width, crops top+bottom white margins → wordmark fills frame
-        fit: BoxFit.cover,
-        alignment: Alignment.center,
-        errorBuilder: (context, error, stackTrace) => Center(
-          child: Text(
-            'favehotel',
+      width: width,
+      fit: BoxFit.contain,
+      alignment: Alignment.centerLeft,
+      errorBuilder: (context, error, stackTrace) => Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Text(
+            'fave',
             style: TextStyle(
-              fontSize: height * 0.36,
-              fontWeight: FontWeight.w700,
+              fontSize: height * 0.72,
+              fontWeight: FontWeight.w800,
               color: AppColors.brandMagenta,
-              letterSpacing: -0.3,
+              letterSpacing: -0.5,
             ),
           ),
-        ),
+          Text(
+            'hotel',
+            style: TextStyle(
+              fontSize: height * 0.72,
+              fontWeight: FontWeight.w400,
+              color: AppColors.brandMagenta,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Padjajaran • Bogor',
+            style: TextStyle(
+              fontSize: height * 0.32,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textMuted,
+            ),
+          ),
+        ],
       ),
     );
   }

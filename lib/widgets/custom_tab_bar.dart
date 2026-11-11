@@ -18,14 +18,13 @@ class CustomSlidingTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Concentric radius: outer 14px, padding 4px, inner pill 10px
     return Container(
-      height: 46,
+      height: 48,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.surfaceInput,
+        color: AppColors.surfacePill,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withOpacity(0.12)),
+        border: Border.all(color: AppColors.hairline),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -43,15 +42,18 @@ class CustomSlidingTabBar extends StatelessWidget {
                 width: tabWidth,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.brandMagenta, AppColors.brandMagentaDark],
-                    ),
+                    color: AppColors.surfaceCard,
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.25),
-                        blurRadius: 6,
+                        color: const Color(0x0C0F172A),
+                        blurRadius: 8,
                         offset: const Offset(0, 2),
+                      ),
+                      BoxShadow(
+                        color: const Color(0x04000000),
+                        blurRadius: 1,
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
@@ -79,11 +81,11 @@ class CustomSlidingTabBar extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 13.5,
                                 fontWeight:
-                                    isSelected ? FontWeight.w600 : FontWeight.w500,
+                                    isSelected ? FontWeight.w700 : FontWeight.w500,
                                 color: isSelected
-                                    ? Colors.white
+                                    ? AppColors.brandMagenta
                                     : AppColors.textSecondary,
-                                letterSpacing: -0.1,
+                                letterSpacing: -0.2,
                               ),
                             ),
                             if (count > 0) ...[
@@ -95,17 +97,22 @@ class CustomSlidingTabBar extends StatelessWidget {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? Colors.white.withOpacity(0.22)
-                                      : Colors.white.withOpacity(0.08),
+                                      ? AppColors.brandMagentaLight
+                                      : AppColors.surfaceCard,
                                   borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.brandMagenta.withOpacity(0.3)
+                                        : AppColors.hairline,
+                                  ),
                                 ),
                                 child: Text(
                                   '$count',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w700,
                                     color: isSelected
-                                        ? Colors.white
+                                        ? AppColors.brandMagenta
                                         : AppColors.textSecondary,
                                     fontFeatures: const [
                                       FontFeature.tabularFigures(),
