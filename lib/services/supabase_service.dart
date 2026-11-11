@@ -31,9 +31,13 @@ class LinenLogEntry {
     final rawNotes = json['notes'] as Map<String, dynamic>? ?? {};
     final rawSec = json['secondary_items'] as Map<String, dynamic>? ?? {};
 
+    final rawCreatedAt = json['created_at']?.toString() ?? '';
+    final parsedDate = DateTime.tryParse(rawCreatedAt);
+    final localCreatedAt = parsedDate != null ? parsedDate.toLocal() : DateTime.now();
+
     return LinenLogEntry(
       id: json['id']?.toString() ?? '',
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
+      createdAt: localCreatedAt,
       category: json['category']?.toString() ?? '',
       handlerName: json['handler_name']?.toString() ?? 'Staff',
       items: rawItems.map((k, v) => MapEntry(k, (v as num).toInt())),
