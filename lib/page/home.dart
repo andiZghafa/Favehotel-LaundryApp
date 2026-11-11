@@ -29,27 +29,24 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 550),
+      duration: const Duration(milliseconds: 600),
     );
 
     _headerFade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.0, 0.45, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.0, 0.5, curve: AppMotion.easeSmoothOut),
     );
-
     _card1Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.18, 0.65, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.20, 0.68, curve: AppMotion.easeSmoothOut),
     );
-
     _card2Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.32, 0.80, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.35, 0.82, curve: AppMotion.easeSmoothOut),
     );
-
     _card3Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.46, 0.95, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.50, 0.96, curve: AppMotion.easeSmoothOut),
     );
 
     _animController.forward();
@@ -67,14 +64,14 @@ class _HomeScreenState extends State<HomeScreen>
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.05, 0.0);
+          const begin = Offset(0.04, 0.0);
           const end = Offset.zero;
-          final tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: AppMotion.easeSmoothOut),
-          );
+          final tween = Tween(begin: begin, end: end)
+              .chain(CurveTween(curve: AppMotion.easeSmoothOut));
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(position: animation.drive(tween), child: child),
+            child: SlideTransition(
+                position: animation.drive(tween), child: child),
           );
         },
         transitionDuration: AppMotion.fast,
@@ -90,78 +87,98 @@ class _HomeScreenState extends State<HomeScreen>
     return AppBackground(
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+        padding: const EdgeInsets.fromLTRB(22, 20, 22, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Edge-aligned Top Masthead + Intro (Linear / Airbnb Workbench hierarchy)
+            // ── Top Masthead ─────────────────────────────────────────────
+            FadeTransition(
+              opacity: _headerFade,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const BrandWordmark(width: 136, height: 38, borderRadius: 7),
+                  const Spacer(),
+                  // Date chip — Linear status-badge style
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface1,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.hairline),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.calendar_month_outlined,
+                          size: 12,
+                          color: AppColors.coralAccent,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          formattedDate,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // ── Display heading (Linear typography) ──────────────────────
             FadeTransition(
               opacity: _headerFade,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const BrandWordmark(
-                        width: 138,
-                        height: 40,
-                        borderRadius: 10,
+                  // Category eyebrow pill — Linear status-badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.coralDim,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: AppColors.coralAccent.withOpacity(0.35)),
+                    ),
+                    child: const Text(
+                      'Housekeeping',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.coralAccent,
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 7,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceCard.withOpacity(0.75),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.14),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.calendar_today_outlined,
-                              size: 13,
-                              color: AppColors.coralAccent,
-                            ),
-                            const SizedBox(width: 7),
-                            Text(
-                              formattedDate,
-                              style: const TextStyle(
-                                fontSize: 12.5,
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w500,
-                                fontFeatures: [FontFeature.tabularFigures()],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 10),
+                  // Display-md headline — Linear `{typography.headline}` 28px w600 -0.6px
                   const Text(
-                    'Housekeeping Logbook',
+                    'Laundry Logbook',
                     style: TextStyle(
-                      fontSize: 26,
+                      fontSize: 28,
                       fontWeight: FontWeight.w600,
-                      letterSpacing: -0.6,
-                      height: 1.2,
+                      letterSpacing: -0.7,
+                      height: 1.18,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   const Text(
-                    'Select a category to record clean linen handovers or log stained items for rewash.',
+                    'Record linen handovers and log stained items for rewash.',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      height: 1.45,
+                      height: 1.5,
                       color: AppColors.textSecondary,
                     ),
                   ),
@@ -171,15 +188,16 @@ class _HomeScreenState extends State<HomeScreen>
 
             const SizedBox(height: 28),
 
-            // Category 1: Fren Linen
+            // ── Category 1: Fren Linen ───────────────────────────────────
             FadeTransition(
               opacity: _card1Fade,
-              child: _CategoryMenuCard(
+              child: _CategoryCard(
                 title: 'Fren Linen',
-                subtitle: 'Duvet covers, bedsheets, pillowcases, bath towels, and batik cloth',
+                subtitle:
+                    'Duvet covers, bedsheets, pillowcases, bath towels',
                 metaLabel: '8 items',
                 icon: Icons.king_bed_outlined,
-                accentColor: AppColors.brandMagenta,
+                accentColor: AppColors.catFren,
                 onTap: () => _navigateTo(
                   context,
                   const LinenFormScreen(category: LinenCategory.fren),
@@ -187,17 +205,17 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
-            // Category 2: Fast Items
+            // ── Category 2: Fast Items ───────────────────────────────────
             FadeTransition(
               opacity: _card2Fade,
-              child: _CategoryMenuCard(
+              child: _CategoryCard(
                 title: 'Fast Items',
-                subtitle: 'Bath mats, mukena, sejadah, sarung, and hotel flags',
+                subtitle: 'Bath mats, mukena, sejadah, sarung, hotel flags',
                 metaLabel: '6 items',
                 icon: Icons.dry_cleaning_outlined,
-                accentColor: const Color(0xFF7B52AB),
+                accentColor: AppColors.catFast,
                 onTap: () => _navigateTo(
                   context,
                   const LinenFormScreen(category: LinenCategory.fast),
@@ -205,135 +223,131 @@ class _HomeScreenState extends State<HomeScreen>
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
-            // Category 3: Rewash Station (Standalone Category)
+            // ── Category 3: Rewash Station ───────────────────────────────
             FadeTransition(
               opacity: _card3Fade,
-              child: _CategoryMenuCard(
+              child: _CategoryCard(
                 title: 'Rewash Station',
-                subtitle: 'Log stained, discolored, or torn linens from Fren and Fast inventories',
+                subtitle:
+                    'Log stained, torn, or discolored linens from Fren & Fast',
                 metaLabel: 'Fren & Fast',
                 icon: Icons.autorenew_rounded,
-                accentColor: AppColors.coralAccent,
-                onTap: () => _navigateTo(
-                  context,
-                  const RewashScreen(),
-                ),
+                accentColor: AppColors.catRewash,
+                onTap: () => _navigateTo(context, const RewashScreen()),
               ),
             ),
 
             const SizedBox(height: 28),
 
-            // Subtle Footer / Exit Row
+            // ── Footer row ───────────────────────────────────────────────
             FadeTransition(
               opacity: _card3Fade,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceCard.withOpacity(0.45),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  color: AppColors.surface1,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.hairline),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
-                      children: [
-                        Icon(
-                          Icons.table_view_outlined,
-                          size: 16,
+                    const Icon(Icons.table_view_outlined,
+                        size: 14, color: AppColors.textMuted),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Exports directly to Excel (.xlsx)',
+                        style: TextStyle(
+                          fontSize: 12,
                           color: AppColors.textMuted,
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Exports directly to Excel (.xlsx)',
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                    TextButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            backgroundColor: AppColors.surfaceCard,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                    GestureDetector(
+                      onTap: () => _showExitDialog(context),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.logout_rounded,
+                              size: 13, color: AppColors.textDisabled),
+                          SizedBox(width: 4),
+                          Text(
+                            'Close',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textDisabled,
+                              fontWeight: FontWeight.w500,
                             ),
-                            title: const Text(
-                              'Close Logbook',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            content: const Text(
-                              'Are you sure you want to close the application?',
-                              style: TextStyle(color: AppColors.textSecondary),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(color: AppColors.textMuted),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(ctx);
-                                  SystemNavigator.pop();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.brandMagenta,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                child: const Text('Exit'),
-                              ),
-                            ],
                           ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        minimumSize: const Size(44, 36),
-                      ),
-                      icon: const Icon(
-                        Icons.logout_rounded,
-                        size: 15,
-                        color: AppColors.textSecondary,
-                      ),
-                      label: const Text(
-                        'Close',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-
-            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
+
+  void _showExitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.hairline),
+        ),
+        title: const Text(
+          'Close Logbook',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.3,
+          ),
+        ),
+        content: const Text(
+          'Are you sure you want to close the application?',
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textMuted),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              SystemNavigator.pop();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.brandMagenta,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Exit'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _CategoryMenuCard extends StatefulWidget {
+// ── Category Card ─────────────────────────────────────────────────────────────
+
+class _CategoryCard extends StatefulWidget {
   final String title;
   final String subtitle;
   final String metaLabel;
@@ -341,7 +355,7 @@ class _CategoryMenuCard extends StatefulWidget {
   final Color accentColor;
   final VoidCallback onTap;
 
-  const _CategoryMenuCard({
+  const _CategoryCard({
     required this.title,
     required this.subtitle,
     required this.metaLabel,
@@ -351,18 +365,15 @@ class _CategoryMenuCard extends StatefulWidget {
   });
 
   @override
-  State<_CategoryMenuCard> createState() => _CategoryMenuCardState();
+  State<_CategoryCard> createState() => _CategoryCardState();
 }
 
-class _CategoryMenuCardState extends State<_CategoryMenuCard> {
+class _CategoryCardState extends State<_CategoryCard> {
   bool _isPressed = false;
   bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    // make-interfaces-feel-better #12: Press scales to 0.96 over 150ms with ease-out
-    final double scale = _isPressed ? 0.96 : 1.0;
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -373,120 +384,133 @@ class _CategoryMenuCardState extends State<_CategoryMenuCard> {
         onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         child: AnimatedScale(
-          scale: scale,
+          scale: _isPressed ? 0.97 : 1.0,
           duration: AppMotion.quick,
           curve: AppMotion.easeSmoothOut,
           child: AnimatedContainer(
             duration: AppMotion.quick,
             curve: AppMotion.easeSmoothOut,
-            // Concentric border radius: outer 20px, padding 18px, inner icon 12px
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _isHovered
-                  ? AppColors.surfaceCardLight
-                  : AppColors.surfaceCard.withOpacity(0.92),
-              borderRadius: BorderRadius.circular(20),
+              // Linear surface ladder: surface1 → surface2 on hover
+              color: _isHovered ? AppColors.surface2 : AppColors.surface1,
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: _isHovered
-                    ? widget.accentColor.withOpacity(0.65)
-                    : Colors.white.withOpacity(0.12),
-                width: 1.0,
+                    ? widget.accentColor.withOpacity(0.5)
+                    : AppColors.hairline,
+                width: 1,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(_isHovered ? 0.28 : 0.18),
-                  blurRadius: _isHovered ? 20 : 12,
-                  offset: Offset(0, _isHovered ? 6 : 4),
-                ),
-              ],
+              // Linear: no heavy drop-shadow — subtle stacked small offsets only
+              boxShadow: _isHovered
+                  ? [
+                      BoxShadow(
+                        color: widget.accentColor.withOpacity(0.12),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.18),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.12),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
             ),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Concentric Icon Container (44x44 hit/visual box, radius 12)
+                // Icon container — concentric radius (outer 14, pad 12, inner 8)
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
-                    color: widget.accentColor.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(12),
+                    color: widget.accentColor.withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: widget.accentColor.withOpacity(0.45),
-                    ),
+                        color: widget.accentColor.withOpacity(0.35)),
                   ),
-                  child: Icon(
-                    widget.icon,
-                    color: Colors.white,
-                    size: 22,
-                  ),
+                  child: Icon(widget.icon,
+                      color: widget.accentColor, size: 20),
                 ),
                 const SizedBox(width: 14),
 
-                // Content column
+                // Text block
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Text(
                               widget.title,
                               style: const TextStyle(
-                                fontSize: 16.5,
+                                fontSize: 15.5,
                                 fontWeight: FontWeight.w600,
+                                letterSpacing: -0.3,
                                 color: AppColors.textPrimary,
-                                letterSpacing: -0.2,
-                                height: 1.25,
+                                height: 1.2,
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
+                          // Meta badge — Linear status-badge pill
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
+                                horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.07),
-                              borderRadius: BorderRadius.circular(6),
+                              color: AppColors.surface3,
+                              borderRadius: BorderRadius.circular(20),
+                              border:
+                                  Border.all(color: AppColors.hairlineStrong),
                             ),
                             child: Text(
                               widget.metaLabel,
                               style: const TextStyle(
-                                fontSize: 11.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
+                                color: AppColors.textMuted,
                                 fontFeatures: [FontFeature.tabularFigures()],
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 4),
                       Text(
                         widget.subtitle,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 12.5,
                           color: AppColors.textSecondary,
                           height: 1.4,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(width: 10),
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: AnimatedSlide(
-                    duration: AppMotion.quick,
-                    offset: _isHovered ? const Offset(0.18, 0) : Offset.zero,
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      size: 20,
-                      color: _isHovered ? AppColors.textPrimary : AppColors.textMuted,
-                    ),
+                const SizedBox(width: 8),
+                AnimatedSlide(
+                  duration: AppMotion.quick,
+                  offset: _isHovered
+                      ? const Offset(0.2, 0)
+                      : Offset.zero,
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 18,
+                    color: _isHovered
+                        ? widget.accentColor
+                        : AppColors.textDisabled,
                   ),
                 ),
               ],
