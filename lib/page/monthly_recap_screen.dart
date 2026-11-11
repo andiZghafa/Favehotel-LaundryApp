@@ -73,7 +73,8 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
   void _startLockoutCountdown(int seconds) {
     setState(() {
       _lockoutSecondsLeft = seconds;
-      _errorMessage = 'Terlalu banyak percobaan salah. Akses dikunci sementara.';
+      _errorMessage =
+          'Terlalu banyak percobaan salah. Akses dikunci sementara.';
     });
 
     _lockoutTimer?.cancel();
@@ -104,7 +105,8 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
     });
 
     // Valid check: Check against default PIN or query Supabase
-    final bool isKnownPin = cleanPin == SupabaseService.defaultPin || cleanPin == '0925' || cleanPin == '8821';
+    final bool isKnownPin =
+        cleanPin == SupabaseService.defaultPin || cleanPin == '0925';
 
     final logs = await SupabaseService.fetchMonthlyLogs(
       pin: cleanPin,
@@ -124,7 +126,8 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
         final remaining = 3 - _failedAttempts;
         setState(() {
           _isLoading = false;
-          _errorMessage = 'PIN salah. Sisa kesempatan: $remaining kali sebelum terkunci.';
+          _errorMessage =
+              'PIN salah. Sisa kesempatan: $remaining kali sebelum terkunci.';
         });
       }
       return;
@@ -169,7 +172,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
 
   void _changeMonth(int delta) {
     setState(() {
-      _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + delta, 1);
+      _selectedDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month + delta,
+        1,
+      );
     });
     _fetchLogs();
   }
@@ -181,7 +188,9 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
           content: const Text('Belum ada log untuk bulan ini.'),
           backgroundColor: AppColors.statusWarning,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       return;
@@ -201,9 +210,13 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(res.message),
-          backgroundColor: res.success ? AppColors.statusSuccess : AppColors.statusWarning,
+          backgroundColor: res.success
+              ? AppColors.statusSuccess
+              : AppColors.statusWarning,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -281,10 +294,18 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppColors.hairline),
                         boxShadow: const [
-                          BoxShadow(color: Color(0x04000000), blurRadius: 6, offset: Offset(0, 2)),
+                          BoxShadow(
+                            color: Color(0x04000000),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
                         ],
                       ),
-                      child: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 20),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: AppColors.textPrimary,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -306,7 +327,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.brandMagentaLight,
                               borderRadius: BorderRadius.circular(6),
@@ -325,7 +349,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                       const SizedBox(height: 2),
                       const Text(
                         'Housekeeping Laundry Audit & Monthly Master Log',
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -333,7 +360,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 if (_unlockedPin != null)
                   IconButton(
                     tooltip: 'Kunci Kembali (Lock Records)',
-                    icon: const Icon(Icons.lock_open_rounded, color: AppColors.brandMagenta, size: 20),
+                    icon: const Icon(
+                      Icons.lock_open_rounded,
+                      color: AppColors.brandMagenta,
+                      size: 20,
+                    ),
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.remove(_prefPinKey);
@@ -371,11 +402,9 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
           animation: _shakeController,
           builder: (context, child) {
             final double sineValue = sin(_shakeController.value * 4 * pi);
-            final double offset = sineValue * 12 * (1.0 - _shakeController.value);
-            return Transform.translate(
-              offset: Offset(offset, 0),
-              child: child,
-            );
+            final double offset =
+                sineValue * 12 * (1.0 - _shakeController.value);
+            return Transform.translate(offset: Offset(offset, 0), child: child);
           },
           child: Container(
             constraints: const BoxConstraints(maxWidth: 420),
@@ -384,11 +413,15 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
               color: AppColors.surfaceCard,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: isLocked ? Colors.redAccent.withOpacity(0.4) : AppColors.hairline,
+                color: isLocked
+                    ? Colors.redAccent.withOpacity(0.4)
+                    : AppColors.hairline,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: isLocked ? const Color(0x15EF4444) : const Color(0x06000000),
+                  color: isLocked
+                      ? const Color(0x15EF4444)
+                      : const Color(0x06000000),
                   blurRadius: 24,
                   offset: const Offset(0, 8),
                 ),
@@ -402,7 +435,9 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                   width: 62,
                   height: 62,
                   decoration: BoxDecoration(
-                    color: isLocked ? const Color(0xFFFEE2E2) : AppColors.brandMagentaLight,
+                    color: isLocked
+                        ? const Color(0xFFFEE2E2)
+                        : AppColors.brandMagentaLight,
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isLocked
@@ -411,7 +446,9 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                     ),
                   ),
                   child: Icon(
-                    isLocked ? Icons.lock_clock_rounded : Icons.lock_outline_rounded,
+                    isLocked
+                        ? Icons.lock_clock_rounded
+                        : Icons.lock_outline_rounded,
                     color: isLocked ? Colors.redAccent : AppColors.brandMagenta,
                     size: 30,
                   ),
@@ -432,7 +469,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 const Text(
                   'Data rekap bulanan favehotel Padjajaran Bogor dilindungi kode akses internal housekeeping.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, height: 1.45, color: AppColors.textSecondary),
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.45,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 22),
 
@@ -440,7 +481,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 if (isLocked) ...[
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFEF2F2),
                       borderRadius: BorderRadius.circular(12),
@@ -449,7 +493,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.timer_outlined, size: 18, color: Color(0xFFDC2626)),
+                        const Icon(
+                          Icons.timer_outlined,
+                          size: 18,
+                          color: Color(0xFFDC2626),
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Terkunci sementara: $_lockoutSecondsLeft detik',
@@ -484,9 +532,14 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                   decoration: InputDecoration(
                     counterText: '',
                     hintText: '• • • •',
-                    hintStyle: const TextStyle(letterSpacing: 6, color: AppColors.textMuted),
+                    hintStyle: const TextStyle(
+                      letterSpacing: 6,
+                      color: AppColors.textMuted,
+                    ),
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    fillColor: isLocked ? const Color(0xFFF1F5F9) : AppColors.surfaceInput,
+                    fillColor: isLocked
+                        ? const Color(0xFFF1F5F9)
+                        : AppColors.surfaceInput,
                     filled: true,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -494,7 +547,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: AppColors.brandMagenta, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: AppColors.brandMagenta,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                   onSubmitted: isLocked ? null : _unlockWithPin,
@@ -505,13 +561,21 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline_rounded, size: 15, color: Colors.redAccent),
+                      const Icon(
+                        Icons.error_outline_rounded,
+                        size: 15,
+                        color: Colors.redAccent,
+                      ),
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           _errorMessage!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12.5, color: Colors.redAccent, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -525,24 +589,34 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: isLocked || _isLoading ? null : () => _unlockWithPin(_pinController.text),
+                    onPressed: isLocked || _isLoading
+                        ? null
+                        : () => _unlockWithPin(_pinController.text),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.brandMagenta,
                       foregroundColor: Colors.white,
                       disabledBackgroundColor: AppColors.hairline,
                       disabledForegroundColor: AppColors.textMuted,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                       elevation: 0,
                     ),
                     child: _isLoading
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           )
                         : Text(
                             isLocked ? 'Akses Terkunci' : 'Buka Rekap Bulanan',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                   ),
                 ),
@@ -558,7 +632,9 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
   Widget _buildUnlockedDashboard(String monthLabel) {
     final tableData = _aggregatedTableData;
     final totalAll = _totalCleanPieces + _totalRewashPieces;
-    final double rewashRate = totalAll > 0 ? (_totalRewashPieces / totalAll * 100) : 0.0;
+    final double rewashRate = totalAll > 0
+        ? (_totalRewashPieces / totalAll * 100)
+        : 0.0;
 
     final filteredItems = tableData.entries.where((e) {
       return e.key.toLowerCase().contains(_itemSearchQuery.toLowerCase());
@@ -578,7 +654,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 tooltip: 'Bulan Sebelumnya',
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceCard,
                   borderRadius: BorderRadius.circular(20),
@@ -587,7 +666,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.calendar_month_rounded, size: 16, color: AppColors.brandMagenta),
+                    const Icon(
+                      Icons.calendar_month_rounded,
+                      size: 16,
+                      color: AppColors.brandMagenta,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       monthLabel,
@@ -657,9 +740,17 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
             children: [
-              _buildSegmentTab(0, 'Ringkasan Per Item (${tableData.length})', Icons.table_chart_outlined),
+              _buildSegmentTab(
+                0,
+                'Ringkasan Per Item (${tableData.length})',
+                Icons.table_chart_outlined,
+              ),
               const SizedBox(width: 10),
-              _buildSegmentTab(1, 'Riwayat Log Harian (${_logs.length})', Icons.list_alt_rounded),
+              _buildSegmentTab(
+                1,
+                'Riwayat Log Harian (${_logs.length})',
+                Icons.list_alt_rounded,
+              ),
             ],
           ),
         ),
@@ -669,29 +760,45 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
         // Tab Content
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.brandMagenta))
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.brandMagenta,
+                  ),
+                )
               : _logs.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.inventory_2_outlined, size: 48, color: AppColors.textMuted.withOpacity(0.5)),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Belum ada log tercatat untuk $monthLabel',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Log otomatis masuk saat staf melakukan Export di aplikasi.',
-                            style: TextStyle(fontSize: 13, color: AppColors.textMuted),
-                          ),
-                        ],
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 48,
+                        color: AppColors.textMuted.withOpacity(0.5),
                       ),
-                    )
-                  : _selectedTabIndex == 0
-                      ? _buildItemSummaryView(filteredItems, totalAll)
-                      : _buildDailyHistoryListView(),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Belum ada log tercatat untuk $monthLabel',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Log otomatis masuk saat staf melakukan Export di aplikasi.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : _selectedTabIndex == 0
+              ? _buildItemSummaryView(filteredItems, totalAll)
+              : _buildDailyHistoryListView(),
         ),
 
         // Bottom Master Export CTA
@@ -710,26 +817,50 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                   children: [
                     const Text(
                       'Master Spreadsheet favehotel Padjajaran (.xlsx)',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     Text(
                       'Rangkuman total item + rincian riwayat lengkap ($monthLabel)',
-                      style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary),
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
               ElevatedButton.icon(
-                onPressed: _isExporting || _logs.isEmpty ? null : _handleExportExcel,
+                onPressed: _isExporting || _logs.isEmpty
+                    ? null
+                    : _handleExportExcel,
                 icon: _isExporting
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : const Icon(Icons.file_download_rounded, size: 18),
-                label: const Text('Export Rekap Bulanan (.xlsx)', style: TextStyle(fontWeight: FontWeight.w700)),
+                label: const Text(
+                  'Export Rekap Bulanan (.xlsx)',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.brandMagenta,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 22,
+                    vertical: 15,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   elevation: 0,
                 ),
               ),
@@ -759,7 +890,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 15, color: isSelected ? Colors.white : AppColors.textSecondary),
+              Icon(
+                icon,
+                size: 15,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+              ),
               const SizedBox(width: 6),
               Text(
                 label,
@@ -776,7 +911,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
     );
   }
 
-  Widget _buildItemSummaryView(List<MapEntry<String, Map<String, int>>> items, int grandTotal) {
+  Widget _buildItemSummaryView(
+    List<MapEntry<String, Map<String, int>>> items,
+    int grandTotal,
+  ) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
       children: [
@@ -785,13 +923,26 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
           onChanged: (val) => setState(() => _itemSearchQuery = val),
           decoration: InputDecoration(
             hintText: 'Cari linen (misal: Duvet, Pillowcase)...',
-            hintStyle: const TextStyle(fontSize: 13, color: AppColors.textMuted),
-            prefixIcon: const Icon(Icons.search_rounded, size: 18, color: AppColors.textMuted),
+            hintStyle: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textMuted,
+            ),
+            prefixIcon: const Icon(
+              Icons.search_rounded,
+              size: 18,
+              color: AppColors.textMuted,
+            ),
             filled: true,
             fillColor: AppColors.surfaceCard,
             contentPadding: const EdgeInsets.symmetric(vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.hairline)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.hairline)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.hairline),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.hairline),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -806,17 +957,63 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
             children: [
               // Table Header Row
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: const BoxDecoration(
                   color: AppColors.surfacePill,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                 ),
                 child: const Row(
                   children: [
-                    Expanded(flex: 3, child: Text('Nama Linen', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textPrimary))),
-                    Expanded(flex: 2, child: Text('Bersih', textAlign: TextAlign.right, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.catFren))),
-                    Expanded(flex: 2, child: Text('Rewash', textAlign: TextAlign.right, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.catRewash))),
-                    Expanded(flex: 2, child: Text('Total', textAlign: TextAlign.right, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: AppColors.textPrimary))),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Nama Linen',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Bersih',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.catFren,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Rewash',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.catRewash,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Total',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -827,27 +1024,69 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 final total = entry.value['total'] ?? 0;
 
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: const BoxDecoration(
-                    border: Border(bottom: BorderSide(color: AppColors.hairline, width: 0.6)),
+                    border: Border(
+                      bottom: BorderSide(color: AppColors.hairline, width: 0.6),
+                    ),
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         flex: 3,
-                        child: Text(entry.key, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        child: Text(
+                          entry.key,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                       ),
                       Expanded(
                         flex: 2,
-                        child: Text('$clean', textAlign: TextAlign.right, style: const TextStyle(fontSize: 13.5, color: AppColors.textSecondary, fontFeatures: [FontFeature.tabularFigures()])),
+                        child: Text(
+                          '$clean',
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            color: AppColors.textSecondary,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                        ),
                       ),
                       Expanded(
                         flex: 2,
-                        child: Text('$rewash', textAlign: TextAlign.right, style: TextStyle(fontSize: 13.5, color: rewash > 0 ? AppColors.catRewash : AppColors.textMuted, fontWeight: rewash > 0 ? FontWeight.w700 : FontWeight.w400, fontFeatures: const [FontFeature.tabularFigures()])),
+                        child: Text(
+                          '$rewash',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            color: rewash > 0
+                                ? AppColors.catRewash
+                                : AppColors.textMuted,
+                            fontWeight: rewash > 0
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
                       ),
                       Expanded(
                         flex: 2,
-                        child: Text('$total pcs', textAlign: TextAlign.right, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.brandMagenta, fontFeatures: [FontFeature.tabularFigures()])),
+                        child: Text(
+                          '$total pcs',
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.brandMagenta,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -883,9 +1122,14 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: log.category == 'REWASH' ? AppColors.catRewashBg : AppColors.catFrenBg,
+                      color: log.category == 'REWASH'
+                          ? AppColors.catRewashBg
+                          : AppColors.catFrenBg,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -893,28 +1137,48 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: log.category == 'REWASH' ? AppColors.catRewash : AppColors.brandMagenta,
+                        color: log.category == 'REWASH'
+                            ? AppColors.catRewash
+                            : AppColors.brandMagenta,
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Text(
                     '$dateStr • $timeStr',
-                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const Spacer(),
                   Text(
                     '${log.totalPieces} pcs',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.person_outline_rounded, size: 14, color: AppColors.textMuted),
+                  const Icon(
+                    Icons.person_outline_rounded,
+                    size: 14,
+                    color: AppColors.textMuted,
+                  ),
                   const SizedBox(width: 4),
-                  Text('Petugas: ${log.handlerName}', style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary)),
+                  Text(
+                    'Petugas: ${log.handlerName}',
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
@@ -923,7 +1187,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                 runSpacing: 6,
                 children: log.items.entries.map((e) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surfacePill,
                       borderRadius: BorderRadius.circular(6),
@@ -931,7 +1198,11 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                     ),
                     child: Text(
                       '${e.key}: ${e.value}',
-                      style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   );
                 }).toList(),
@@ -963,7 +1234,10 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
           Container(
             width: 44,
             height: 44,
-            decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Icon(icon, color: color, size: 22),
           ),
           const SizedBox(width: 12),
@@ -971,7 +1245,14 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary, fontWeight: FontWeight.w500)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 const SizedBox(height: 2),
                 Text(
                   value,
@@ -982,7 +1263,13 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
                     fontFeatures: [FontFeature.tabularFigures()],
                   ),
                 ),
-                Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
+                ),
               ],
             ),
           ),

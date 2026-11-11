@@ -269,36 +269,6 @@ class _HomeScreenState extends State<HomeScreen>
                         Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () => _navigateTo(context, const MonthlyRecapScreen()),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Icon(
-                                    Icons.summarize_outlined,
-                                    size: 15,
-                                    color: AppColors.brandMagenta,
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    'Rekap Bulanan',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: AppColors.brandMagenta,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
                             onTap: () => _showExitDialog(context),
                             borderRadius: BorderRadius.circular(8),
                             child: Padding(
