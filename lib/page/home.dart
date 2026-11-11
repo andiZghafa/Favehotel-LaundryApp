@@ -29,9 +29,8 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 650),
     );
-
     _headerFade = CurvedAnimation(
       parent: _animController,
       curve: const Interval(0.0, 0.5, curve: AppMotion.easeSmoothOut),
@@ -48,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen>
       parent: _animController,
       curve: const Interval(0.50, 0.96, curve: AppMotion.easeSmoothOut),
     );
-
     _animController.forward();
   }
 
@@ -62,16 +60,14 @@ class _HomeScreenState extends State<HomeScreen>
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => screen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.04, 0.0);
-          const end = Offset.zero;
-          final tween = Tween(begin: begin, end: end)
+        pageBuilder: (_, animation, __) => screen,
+        transitionsBuilder: (_, animation, __, child) {
+          final tween = Tween(begin: const Offset(0.04, 0.0), end: Offset.zero)
               .chain(CurveTween(curve: AppMotion.easeSmoothOut));
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-                position: animation.drive(tween), child: child),
+            child:
+                SlideTransition(position: animation.drive(tween), child: child),
           );
         },
         transitionDuration: AppMotion.fast,
@@ -81,120 +77,31 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('EEE, d MMM yyyy').format(now);
+    final formattedDate =
+        DateFormat('EEEE, d MMMM yyyy').format(DateTime.now());
 
     return AppBackground(
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(22, 20, 22, 32),
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Top Masthead ─────────────────────────────────────────────
+            // ── Hero Header ───────────────────────────────────────────────
             FadeTransition(
               opacity: _headerFade,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const BrandWordmark(width: 136, height: 38, borderRadius: 7),
-                  const Spacer(),
-                  // Date chip — Linear status-badge style
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface1,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.hairline),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.calendar_month_outlined,
-                          size: 12,
-                          color: AppColors.coralAccent,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          formattedDate,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                            fontFeatures: [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // ── Display heading (Linear typography) ──────────────────────
-            FadeTransition(
-              opacity: _headerFade,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Category eyebrow pill — Linear status-badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.coralDim,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: AppColors.coralAccent.withOpacity(0.35)),
-                    ),
-                    child: const Text(
-                      'Housekeeping',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.coralAccent,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Display-md headline — Linear `{typography.headline}` 28px w600 -0.6px
-                  const Text(
-                    'Laundry Logbook',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.7,
-                      height: 1.18,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Record linen handovers and log stained items for rewash.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      height: 1.5,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
+              child: _HeroHeader(formattedDate: formattedDate),
             ),
 
             const SizedBox(height: 28),
 
-            // ── Category 1: Fren Linen ───────────────────────────────────
+            // ── Category Cards ────────────────────────────────────────────
             FadeTransition(
               opacity: _card1Fade,
               child: _CategoryCard(
                 title: 'Fren Linen',
                 subtitle:
-                    'Duvet covers, bedsheets, pillowcases, bath towels',
+                    'Duvet covers, bedsheets, pillowcases & bath towels',
                 metaLabel: '8 items',
                 icon: Icons.king_bed_outlined,
                 accentColor: AppColors.catFren,
@@ -207,12 +114,12 @@ class _HomeScreenState extends State<HomeScreen>
 
             const SizedBox(height: 12),
 
-            // ── Category 2: Fast Items ───────────────────────────────────
             FadeTransition(
               opacity: _card2Fade,
               child: _CategoryCard(
                 title: 'Fast Items',
-                subtitle: 'Bath mats, mukena, sejadah, sarung, hotel flags',
+                subtitle:
+                    'Bath mats, mukena, sejadah, sarung & hotel flags',
                 metaLabel: '6 items',
                 icon: Icons.dry_cleaning_outlined,
                 accentColor: AppColors.catFast,
@@ -225,69 +132,26 @@ class _HomeScreenState extends State<HomeScreen>
 
             const SizedBox(height: 12),
 
-            // ── Category 3: Rewash Station ───────────────────────────────
             FadeTransition(
               opacity: _card3Fade,
               child: _CategoryCard(
                 title: 'Rewash Station',
                 subtitle:
-                    'Log stained, torn, or discolored linens from Fren & Fast',
+                    'Log stained, torn or discolored linens from Fren & Fast',
                 metaLabel: 'Fren & Fast',
                 icon: Icons.autorenew_rounded,
                 accentColor: AppColors.catRewash,
-                onTap: () => _navigateTo(context, const RewashScreen()),
+                onTap: () =>
+                    _navigateTo(context, const RewashScreen()),
               ),
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
-            // ── Footer row ───────────────────────────────────────────────
+            // ── Footer ────────────────────────────────────────────────────
             FadeTransition(
               opacity: _card3Fade,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.surface1,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.hairline),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.table_view_outlined,
-                        size: 14, color: AppColors.textMuted),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        'Exports directly to Excel (.xlsx)',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => _showExitDialog(context),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.logout_rounded,
-                              size: 13, color: AppColors.textDisabled),
-                          SizedBox(width: 4),
-                          Text(
-                            'Close',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textDisabled,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: _FooterRow(onClose: () => _showExitDialog(context)),
             ),
           ],
         ),
@@ -320,10 +184,8 @@ class _HomeScreenState extends State<HomeScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textMuted),
-            ),
+            child: const Text('Cancel',
+                style: TextStyle(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -334,13 +196,111 @@ class _HomeScreenState extends State<HomeScreen>
               backgroundColor: AppColors.brandMagenta,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+                  borderRadius: BorderRadius.circular(8)),
             ),
             child: const Text('Exit'),
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Hero Header ───────────────────────────────────────────────────────────────
+
+class _HeroHeader extends StatelessWidget {
+  final String formattedDate;
+  const _HeroHeader({required this.formattedDate});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Top row: logo left | date chip right
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Logo — full width, properly cropped via BoxFit.cover
+            const BrandWordmark(width: 200, height: 56, borderRadius: 10),
+            const Spacer(),
+            // Date chip
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.surface1,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.hairline),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.calendar_month_outlined,
+                      size: 13, color: AppColors.coralAccent),
+                  const SizedBox(width: 6),
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 28),
+
+        // Section label pill
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.coralDim,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: AppColors.coralAccent.withOpacity(0.4)),
+          ),
+          child: const Text(
+            'Housekeeping',
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              color: AppColors.coralAccent,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        // Display headline
+        const Text(
+          'Laundry Logbook',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.8,
+            height: 1.15,
+            color: AppColors.textPrimary,
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
+        const Text(
+          'Record linen handovers and log stained items for rewash.',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -392,56 +352,47 @@ class _CategoryCardState extends State<_CategoryCard> {
             curve: AppMotion.easeSmoothOut,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              // Linear surface ladder: surface1 → surface2 on hover
               color: _isHovered ? AppColors.surface2 : AppColors.surface1,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isHovered
-                    ? widget.accentColor.withOpacity(0.5)
+                    ? widget.accentColor.withOpacity(0.55)
                     : AppColors.hairline,
-                width: 1,
               ),
-              // Linear: no heavy drop-shadow — subtle stacked small offsets only
-              boxShadow: _isHovered
-                  ? [
-                      BoxShadow(
-                        color: widget.accentColor.withOpacity(0.12),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.18),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+              boxShadow: [
+                if (_isHovered)
+                  BoxShadow(
+                    color: widget.accentColor.withOpacity(0.15),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Icon container — concentric radius (outer 14, pad 12, inner 8)
+                // Icon box — concentric radius
                 Container(
-                  width: 42,
-                  height: 42,
+                  width: 46,
+                  height: 46,
                   decoration: BoxDecoration(
-                    color: widget.accentColor.withOpacity(0.14),
-                    borderRadius: BorderRadius.circular(10),
+                    // Slightly lighter background so icons are visible
+                    color: widget.accentColor.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: widget.accentColor.withOpacity(0.35)),
+                        color: widget.accentColor.withOpacity(0.45)),
                   ),
                   child: Icon(widget.icon,
-                      color: widget.accentColor, size: 20),
+                      color: widget.accentColor, size: 22),
                 ),
                 const SizedBox(width: 14),
 
-                // Text block
+                // Text
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,7 +404,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                             child: Text(
                               widget.title,
                               style: const TextStyle(
-                                fontSize: 15.5,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: -0.3,
                                 color: AppColors.textPrimary,
@@ -462,23 +413,24 @@ class _CategoryCardState extends State<_CategoryCard> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Meta badge — Linear status-badge pill
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
+                                horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: AppColors.surface3,
+                              color: widget.accentColor.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(20),
-                              border:
-                                  Border.all(color: AppColors.hairlineStrong),
+                              border: Border.all(
+                                  color: widget.accentColor.withOpacity(0.3)),
                             ),
                             child: Text(
                               widget.metaLabel,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textMuted,
-                                fontFeatures: [FontFeature.tabularFigures()],
+                                color: widget.accentColor,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures()
+                                ],
                               ),
                             ),
                           ),
@@ -502,12 +454,11 @@ class _CategoryCardState extends State<_CategoryCard> {
                 const SizedBox(width: 8),
                 AnimatedSlide(
                   duration: AppMotion.quick,
-                  offset: _isHovered
-                      ? const Offset(0.2, 0)
-                      : Offset.zero,
+                  offset:
+                      _isHovered ? const Offset(0.2, 0) : Offset.zero,
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    size: 18,
+                    size: 20,
                     color: _isHovered
                         ? widget.accentColor
                         : AppColors.textDisabled,
@@ -517,6 +468,57 @@ class _CategoryCardState extends State<_CategoryCard> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ── Footer Row ────────────────────────────────────────────────────────────────
+
+class _FooterRow extends StatelessWidget {
+  final VoidCallback onClose;
+  const _FooterRow({required this.onClose});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.surface1.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.hairline),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.table_view_outlined,
+              size: 14, color: AppColors.textMuted),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: Text(
+              'Exports directly to Excel (.xlsx)',
+              style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+            ),
+          ),
+          GestureDetector(
+            onTap: onClose,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.logout_rounded,
+                    size: 13, color: AppColors.textDisabled),
+                SizedBox(width: 4),
+                Text(
+                  'Close',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textDisabled,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

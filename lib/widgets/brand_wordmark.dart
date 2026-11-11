@@ -3,11 +3,11 @@ import 'package:laundry_app/theme/app_theme.dart';
 
 /// Displays the favehotel wordmark from `assets/IKON.png`.
 ///
-/// The source PNG is 200×200 with ~70% vertical dead-white space.
-/// We use BoxFit.cover + Alignment.center inside a ~3.4:1 horizontal
-/// container to crop away the top/bottom margins and show only the wordmark.
-///
-/// Background: dark surface-1 panel with a hairline border — not a white box.
+/// The source PNG is 200×200 with ~70% vertical dead-white space baked in.
+/// BoxFit.cover on a wide/short container crops the top+bottom white margins
+/// and reveals just the wordmark row — the aspect ratio maths:
+///   container 200×56  →  scale = 200/200 = 1.0  →  full width, centered crop
+///   shows the middle 56px of the 200px original (y≈72..128) which is the wordmark.
 class BrandWordmark extends StatelessWidget {
   final double width;
   final double height;
@@ -15,9 +15,9 @@ class BrandWordmark extends StatelessWidget {
 
   const BrandWordmark({
     super.key,
-    this.width = 140,
-    this.height = 40,
-    this.borderRadius = 8,
+    this.width = 200,
+    this.height = 56,
+    this.borderRadius = 10,
   });
 
   @override
@@ -28,25 +28,28 @@ class BrandWordmark extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: AppColors.hairline, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.20),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        // Horizontal inset trims the outer white margins of the PNG
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Image.asset(
-          'assets/IKON.png',
-          fit: BoxFit.contain,
-          alignment: Alignment.center,
-          errorBuilder: (context, error, stackTrace) => Center(
-            child: Text(
-              'favehotel',
-              style: TextStyle(
-                fontSize: height * 0.36,
-                fontWeight: FontWeight.w700,
-                color: AppColors.brandMagenta,
-                letterSpacing: -0.3,
-              ),
+      child: Image.asset(
+        'assets/IKON.png',
+        // cover: fills width, crops top+bottom white margins → wordmark fills frame
+        fit: BoxFit.cover,
+        alignment: Alignment.center,
+        errorBuilder: (context, error, stackTrace) => Center(
+          child: Text(
+            'favehotel',
+            style: TextStyle(
+              fontSize: height * 0.36,
+              fontWeight: FontWeight.w700,
+              color: AppColors.brandMagenta,
+              letterSpacing: -0.3,
             ),
           ),
         ),

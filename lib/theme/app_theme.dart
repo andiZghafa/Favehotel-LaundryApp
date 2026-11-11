@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Design system tokens — Linear-inspired dark canvas adapted to brand palette.
-/// Canvas: #0D0620 (deep plum, nearly black). Surface ladder: 3 steps.
-/// Brand accent: coral #FF6B6B + magenta #900C46. No loud gradients.
+/// Design tokens — rich plum-purple dark canvas.
+/// Canvas: #1A0C38 (not pitch-black — the purple brand DNA is visible).
+/// Three-step surface ladder with real contrast between levels.
+/// Accents: coral #FF6B6B (interactive), magenta #900C46 (CTA/rewash).
 class AppColors {
-  // ── Canvas & surfaces ──────────────────────────────────────────────────────
-  static const Color canvas      = Color(0xFF0D0620); // near-black plum canvas
-  static const Color surface1    = Color(0xFF160A30); // cards, panels
-  static const Color surface2    = Color(0xFF1E1040); // hovered/featured card
-  static const Color surface3    = Color(0xFF251550); // elevated inner surface
-  static const Color surfaceInput = Color(0xFF0F0520); // input background
+  // ── Canvas & surfaces ─────────────────────────────────────────────────────
+  static const Color canvas      = Color(0xFF1A0C38); // rich plum — dark but alive
+  static const Color surface1    = Color(0xFF241552); // cards, panels
+  static const Color surface2    = Color(0xFF2E1C65); // hover / featured
+  static const Color surface3    = Color(0xFF3A2478); // elevated inner
+  static const Color surfaceInput = Color(0xFF160A2E); // input bg
 
-  // ── Hairlines ──────────────────────────────────────────────────────────────
-  static const Color hairline      = Color(0xFF2A1A4A); // 1px card borders
-  static const Color hairlineStrong = Color(0xFF3D2A65); // hover, focus borders
+  // ── Hairlines ─────────────────────────────────────────────────────────────
+  static const Color hairline       = Color(0xFF3D2870); // 1px card borders
+  static const Color hairlineStrong = Color(0xFF5A3E9A); // hover/focus borders
 
-  // ── Text ───────────────────────────────────────────────────────────────────
-  static const Color textPrimary   = Color(0xFFF6F4FF); // ink — near-white w/ purple tint
-  static const Color textSecondary = Color(0xFFCDC6E8); // secondary prose
-  static const Color textMuted     = Color(0xFF8A80AD); // placeholder, meta
-  static const Color textDisabled  = Color(0xFF4D4568); // disabled
+  // ── Text ──────────────────────────────────────────────────────────────────
+  static const Color textPrimary   = Color(0xFFF5F0FF); // near-white w/ purple tint
+  static const Color textSecondary = Color(0xFFCDC1EE); // secondary prose
+  static const Color textMuted     = Color(0xFF8E80B8); // placeholder, meta
+  static const Color textDisabled  = Color(0xFF524478); // disabled
 
-  // ── Brand accents ──────────────────────────────────────────────────────────
-  static const Color coralAccent    = Color(0xFFFF6B6B); // coral — primary interactive accent
-  static const Color coralDim       = Color(0x33FF6B6B); // coral at 20%
-  static const Color brandMagenta   = Color(0xFF900C46); // magenta — CTA, Rewash glow
+  // ── Brand accents ─────────────────────────────────────────────────────────
+  static const Color coralAccent    = Color(0xFFFF6B6B); // primary interactive
+  static const Color coralDim       = Color(0x2DFF6B6B); // coral at 18%
+  static const Color brandMagenta   = Color(0xFF900C46); // CTA, rewash
   static const Color brandMagentaDark = Color(0xFF7A0A3C);
-  static const Color peachLight     = Color(0xFFFFE4E1); // kept for compatibility
+  static const Color peachLight     = Color(0xFFFFE4E1);
 
-  // ── Category signals ───────────────────────────────────────────────────────
-  static const Color catFren  = Color(0xFFB33060); // magenta-rose
-  static const Color catFast  = Color(0xFF4D3A9A); // deep purple
-  static const Color catRewash = Color(0xFFFF6B6B); // coral
+  // ── Category signals ──────────────────────────────────────────────────────
+  static const Color catFren   = Color(0xFFB33060); // magenta-rose for FREN
+  static const Color catFast   = Color(0xFF5B46B8); // bright purple for FAST
+  static const Color catRewash = Color(0xFFFF6B6B); // coral for rewash
 
-  // ── Semantic ───────────────────────────────────────────────────────────────
+  // ── Semantic ──────────────────────────────────────────────────────────────
   static const Color statusSuccess = Color(0xFF2EC4B6);
   static const Color statusWarning = Color(0xFFFF9F1C);
 
