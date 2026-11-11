@@ -26,6 +26,7 @@ migrate_working_dir/
 # Vercel build cache / Flutter clone
 _flutter/
 .vercel
+.playwright-cli/
 
 # Flutter/Dart/Pub related
 **/doc/api/

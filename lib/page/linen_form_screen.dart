@@ -72,11 +72,12 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
         : AppColors.catFast;
 
     return AppBackground(
+      maxWidth: 1140,
       child: Column(
         children: [
           // Top Workbench Header Bar (Airbnb / Linear edge-aligned style)
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 18, 24, 12),
             child: Row(
               children: [
                 Material(
@@ -107,7 +108,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +116,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                       Text(
                         widget.category.displayTitle,
                         style: const TextStyle(
-                          fontSize: 19,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.4,
                           color: AppColors.textPrimary,
@@ -125,7 +126,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                       Text(
                         widget.category.subtitle,
                         style: const TextStyle(
-                          fontSize: 12.5,
+                          fontSize: 13,
                           color: AppColors.textSecondary,
                         ),
                         maxLines: 1,
@@ -134,7 +135,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 // Add custom item action button
                 Material(
                   color: AppColors.surfaceCard,
@@ -152,7 +153,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppColors.hairline),
@@ -168,11 +169,11 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.add_rounded, color: catColor, size: 18),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 5),
                           const Text(
                             'Add item',
                             style: TextStyle(
-                              fontSize: 12.5,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             ),
@@ -188,10 +189,10 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
 
           // Search Bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 6.0),
             child: TextField(
               onChanged: (val) => setState(() => _searchQuery = val),
-              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14.5),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.surfaceCard,
@@ -204,7 +205,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                         onPressed: () => setState(() => _searchQuery = ''),
                       )
                     : null,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(color: AppColors.hairline),
@@ -221,25 +222,61 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
             ),
           ),
 
-          // Item List
+          // Responsive Item Grid (2 columns on desktop >= 768, 1 column on mobile)
           Expanded(
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-              itemCount: filteredItems.length,
-              itemBuilder: (context, index) {
-                final item = filteredItems[index];
-                return LinenCounterCard(
-                  key: ValueKey(item),
-                  itemName: item,
-                  count: _items[item] ?? 0,
-                  note: _notes[item] ?? '',
-                  isRewash: false,
-                  onCountChanged: (newCount) {
-                    setState(() => _items[item] = newCount);
-                  },
-                  onNoteChanged: (newNote) {
-                    setState(() => _notes[item] = newNote);
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final bool isWide = constraints.maxWidth >= 768;
+
+                if (isWide) {
+                  return GridView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(24, 10, 24, 100),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisExtent: 148,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 14,
+                    ),
+                    itemCount: filteredItems.length,
+                    itemBuilder: (context, index) {
+                      final item = filteredItems[index];
+                      return LinenCounterCard(
+                        key: ValueKey(item),
+                        itemName: item,
+                        count: _items[item] ?? 0,
+                        note: _notes[item] ?? '',
+                        isRewash: false,
+                        onCountChanged: (newCount) {
+                          setState(() => _items[item] = newCount);
+                        },
+                        onNoteChanged: (newNote) {
+                          setState(() => _notes[item] = newNote);
+                        },
+                      );
+                    },
+                  );
+                }
+
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+                  itemCount: filteredItems.length,
+                  itemBuilder: (context, index) {
+                    final item = filteredItems[index];
+                    return LinenCounterCard(
+                      key: ValueKey(item),
+                      itemName: item,
+                      count: _items[item] ?? 0,
+                      note: _notes[item] ?? '',
+                      isRewash: false,
+                      onCountChanged: (newCount) {
+                        setState(() => _items[item] = newCount);
+                      },
+                      onNoteChanged: (newNote) {
+                        setState(() => _notes[item] = newNote);
+                      },
+                    );
                   },
                 );
               },
@@ -248,7 +285,7 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
 
           // Bottom Floating Summary Bar
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 18),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
             decoration: BoxDecoration(
               color: AppColors.surfaceCard,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -289,14 +326,14 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: 28),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _navigateDirectToSummary,
                     icon: const Icon(Icons.arrow_forward_rounded, size: 18),
                     label: const Text(
                       'Review & Export',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w700),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: catColor,

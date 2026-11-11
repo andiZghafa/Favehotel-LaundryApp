@@ -74,6 +74,8 @@ flutter:
     - assets/icon.png
     - assets/IKON.png
     - assets/logo_clean.png
+    - assets/New-IKON.png
+    - assets/new_IKON.png
 
 flutter_icons:
   android: true

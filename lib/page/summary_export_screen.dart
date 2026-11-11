@@ -140,11 +140,12 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
         .toList();
 
     return AppBackground(
+      maxWidth: 1140,
       child: Column(
         children: [
           // Top Header Bar
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 18, 24, 12),
             child: Row(
               children: [
                 Material(
@@ -175,7 +176,7 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +184,7 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                       const Text(
                         'Review & Export',
                         style: TextStyle(
-                          fontSize: 19,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.4,
                           color: AppColors.textPrimary,
@@ -193,7 +194,7 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                       Text(
                         '$_friendlyCategoryLabel summary worksheet',
                         style: const TextStyle(
-                          fontSize: 12.5,
+                          fontSize: 13,
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -204,323 +205,377 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
             ),
           ),
 
-          // Scrollable Content
+          // Responsive Content: 2-column on desktop >= 800, 1-column on mobile
           Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Total stats banner (favehotel gradient)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          AppColors.brandMagenta,
-                          AppColors.brandMagentaDark,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.brandMagenta.withOpacity(0.25),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final bool isDesktop = constraints.maxWidth >= 800;
+
+                if (isDesktop) {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _friendlyCategoryLabel,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.peachLight,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            const Text(
-                              'Total Items Logged',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.2,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.18),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withOpacity(0.3)),
-                          ),
-                          child: Text(
-                            '$totalPieces pcs',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.4,
-                              color: Colors.white,
-                              fontFeatures: [FontFeature.tabularFigures()],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  // Handler Name Card
-                  Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceCard,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: AppColors.hairline),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x04000000),
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.person_pin_rounded, color: AppColors.brandMagenta, size: 20),
-                            SizedBox(width: 8),
-                            Text(
-                              'Housekeeping Handler',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.2,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: _handlerController,
-                          style: const TextStyle(color: AppColors.textPrimary, fontSize: 14.5),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: AppColors.surfaceInput,
-                            hintText: 'Enter staff name (e.g. Budi, Siti)...',
-                            hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13.5),
-                            prefixIcon: const Icon(Icons.badge_outlined, color: AppColors.textMuted, size: 20),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: AppColors.hairline),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: AppColors.hairline),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(12)),
-                              borderSide: BorderSide(color: AppColors.brandMagenta, width: 2),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  // Items List Breakdown
-                  Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceCard,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: AppColors.hairline),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x04000000),
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.isRewash ? 'Fren Linen Rewash' : 'Item Breakdown',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.2,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        if (activeEntries.isEmpty)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'No items logged in this category.',
-                              style: TextStyle(color: AppColors.textMuted, fontSize: 13),
-                            ),
-                          )
-                        else
-                          ...activeEntries.map((e) {
-                            final note = widget.notes[e.key];
-                            return _buildItemRow(e.key, e.value, note);
-                          }),
-
-                        if (widget.isRewash) ...[
-                          const Divider(color: AppColors.hairline, height: 28),
-                          const Text(
-                            'Fast Items Rewash',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.2,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          if (activeSecondaryEntries.isEmpty)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.0),
-                              child: Text(
-                                'No items logged in this category.',
-                                style: TextStyle(color: AppColors.textMuted, fontSize: 13),
-                              ),
-                            )
-                          else
-                            ...activeSecondaryEntries.map((e) {
-                              final note = widget.secondaryNotes?[e.key];
-                              return _buildItemRow(e.key, e.value, note);
-                            }),
-                        ],
-                      ],
-                    ),
-                  ),
-
-                  if (_lastResult != null && _lastResult!.success) ...[
-                    const SizedBox(height: 18),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFECFDF5),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFA7F3D0)),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.check_circle_rounded, color: AppColors.statusSuccess, size: 24),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Excel Export Complete',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF065F46),
-                                    fontSize: 14.5,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  _lastResult!.message,
-                                  style: const TextStyle(
-                                    color: Color(0xFF047857),
-                                    fontSize: 12.5,
-                                  ),
-                                ),
+                        // Left Column (Controls & Export)
+                        Expanded(
+                          flex: 5,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildTotalStatsBanner(),
+                              const SizedBox(height: 18),
+                              _buildHandlerCard(),
+                              if (_lastResult != null && _lastResult!.success) ...[
+                                const SizedBox(height: 18),
+                                _buildSuccessBanner(),
                               ],
-                            ),
+                              const SizedBox(height: 24),
+                              _buildExportButton(),
+                              const SizedBox(height: 12),
+                              _buildReturnHomeButton(),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 24),
-
-                  // Export Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton.icon(
-                      onPressed: _isExporting ? null : _handleExport,
-                      icon: _isExporting
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                            )
-                          : const Icon(Icons.file_download_outlined, size: 20),
-                      label: Text(
-                        _isExporting ? 'Generating Excel File...' : 'Export to Excel (.xlsx)',
-                        style: const TextStyle(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w700,
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.brandMagenta,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                        const SizedBox(width: 24),
+
+                        // Right Column (Item Breakdown)
+                        Expanded(
+                          flex: 6,
+                          child: _buildBreakdownCard(activeEntries, activeSecondaryEntries),
                         ),
-                        elevation: 0,
-                      ),
+                      ],
                     ),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTotalStatsBanner(),
+                      const SizedBox(height: 18),
+                      _buildHandlerCard(),
+                      const SizedBox(height: 18),
+                      _buildBreakdownCard(activeEntries, activeSecondaryEntries),
+                      if (_lastResult != null && _lastResult!.success) ...[
+                        const SizedBox(height: 18),
+                        _buildSuccessBanner(),
+                      ],
+                      const SizedBox(height: 24),
+                      _buildExportButton(),
+                      const SizedBox(height: 10),
+                      _buildReturnHomeButton(),
+                      const SizedBox(height: 28),
+                    ],
                   ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                  const SizedBox(height: 10),
-
-                  // Return Home button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomeScreen()),
-                          (route) => false,
-                        );
-                      },
-                      icon: const Icon(Icons.home_outlined, color: AppColors.textSecondary, size: 18),
-                      label: const Text(
-                        'Return to Home Dashboard',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 13.5, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 28),
-                ],
+  Widget _buildTotalStatsBanner() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            AppColors.brandMagenta,
+            AppColors.brandMagentaDark,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.brandMagenta.withOpacity(0.25),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _friendlyCategoryLabel,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.peachLight,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Total Items Logged',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.18),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withOpacity(0.3)),
+            ),
+            child: Text(
+              '$totalPieces pcs',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.4,
+                color: Colors.white,
+                fontFeatures: [FontFeature.tabularFigures()],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHandlerCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceCard,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.hairline),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x04000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.person_pin_rounded, color: AppColors.brandMagenta, size: 20),
+              SizedBox(width: 8),
+              Text(
+                'Housekeeping Handler',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.2,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _handlerController,
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 14.5),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: AppColors.surfaceInput,
+              hintText: 'Enter staff name (e.g. Budi, Siti)...',
+              hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13.5),
+              prefixIcon: const Icon(Icons.badge_outlined, color: AppColors.textMuted, size: 20),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.hairline),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.hairline),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: AppColors.brandMagenta, width: 2),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBreakdownCard(List<MapEntry<String, int>> activeEntries, List<MapEntry<String, int>> activeSecondaryEntries) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceCard,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.hairline),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x04000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.isRewash ? 'Fren Linen Rewash' : 'Item Breakdown',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (activeEntries.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                'No items logged in this category.',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+              ),
+            )
+          else
+            ...activeEntries.map((e) {
+              final note = widget.notes[e.key];
+              return _buildItemRow(e.key, e.value, note);
+            }),
+
+          if (widget.isRewash) ...[
+            const Divider(color: AppColors.hairline, height: 28),
+            const Text(
+              'Fast Items Rewash',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (activeSecondaryEntries.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'No items logged in this category.',
+                  style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                ),
+              )
+            else
+              ...activeSecondaryEntries.map((e) {
+                final note = widget.secondaryNotes?[e.key];
+                return _buildItemRow(e.key, e.value, note);
+              }),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSuccessBanner() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFECFDF5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFA7F3D0)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle_rounded, color: AppColors.statusSuccess, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Excel Export Complete',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF065F46),
+                    fontSize: 14.5,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _lastResult!.message,
+                  style: const TextStyle(
+                    color: Color(0xFF047857),
+                    fontSize: 12.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExportButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: ElevatedButton.icon(
+        onPressed: _isExporting ? null : _handleExport,
+        icon: _isExporting
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              )
+            : const Icon(Icons.file_download_outlined, size: 20),
+        label: Text(
+          _isExporting ? 'Generating Excel File...' : 'Export to Excel (.xlsx)',
+          style: const TextStyle(
+            fontSize: 15.5,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.brandMagenta,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          elevation: 0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReturnHomeButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 46,
+      child: TextButton.icon(
+        onPressed: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
+        },
+        icon: const Icon(Icons.home_outlined, color: AppColors.textSecondary, size: 18),
+        label: const Text(
+          'Return to Home Dashboard',
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13.5, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }
@@ -542,7 +597,7 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (hasNote)

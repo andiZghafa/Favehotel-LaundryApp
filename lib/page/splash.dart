@@ -32,13 +32,13 @@ class _SplashScreenState extends State<SplashScreen>
       curve: const Interval(0.0, 0.6, curve: AppMotion.easeSmoothOut),
     );
 
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.05),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: AppMotion.easeSmoothOut),
-    ));
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.6, curve: AppMotion.easeSmoothOut),
+          ),
+        );
 
     _controller.forward();
 
@@ -147,7 +147,11 @@ class _SplashScreenState extends State<SplashScreen>
                 opacity: _fadeAnim,
                 child: Row(
                   children: const [
-                    Icon(Icons.hotel_rounded, size: 16, color: AppColors.brandMagenta),
+                    Icon(
+                      Icons.hotel_rounded,
+                      size: 16,
+                      color: AppColors.brandMagenta,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'favehotel Padjajaran Bogor',

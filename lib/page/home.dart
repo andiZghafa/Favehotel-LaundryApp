@@ -32,22 +32,22 @@ class _HomeScreenState extends State<HomeScreen>
       duration: const Duration(milliseconds: 600),
     );
 
-    // Staggered entrances (Emil Kowalski: 40-60ms stagger)
+    // Emil Kowalski stagger: 40-60ms cascading entrances
     _headerFade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.0, 0.50, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.0, 0.45, curve: AppMotion.easeSmoothOut),
     );
     _card1Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.18, 0.68, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.15, 0.65, curve: AppMotion.easeSmoothOut),
     );
     _card2Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.32, 0.82, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.28, 0.78, curve: AppMotion.easeSmoothOut),
     );
     _card3Fade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.46, 0.96, curve: AppMotion.easeSmoothOut),
+      curve: const Interval(0.40, 0.92, curve: AppMotion.easeSmoothOut),
     );
 
     _animController.forward();
@@ -83,237 +83,482 @@ class _HomeScreenState extends State<HomeScreen>
     final formattedDate = DateFormat('EEE, d MMM yyyy').format(now);
 
     return AppBackground(
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 36),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Top Navigation Bar ──────────────────────────────────────────
-            FadeTransition(
-              opacity: _headerFade,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Naked, unboxed favehotel brand logo
-                  const BrandWordmark(height: 38),
-                  const Spacer(),
-                  // Shift & Date Chip
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      maxWidth: 1140,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isDesktop = constraints.maxWidth >= 900;
+          final double horizontalPadding = isDesktop ? 36.0 : 20.0;
+
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 36),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Top Navigation Bar ──────────────────────────────────────
+                FadeTransition(
+                  opacity: _headerFade,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Official favehotel unboxed logo (height 44)
+                      const BrandWordmark(height: 44),
+                      const Spacer(),
+
+                      // Center Department Pill (Desktop only)
+                      if (isDesktop) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceCard,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppColors.hairline),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.hotel_rounded, size: 14, color: AppColors.brandMagenta),
+                              SizedBox(width: 6),
+                              Text(
+                                'Housekeeping Dept • favehotel Padjajaran',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+
+                      // Shift & Date Chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceCard,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.hairline),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x05000000),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 7,
+                              height: 7,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.statusSuccess,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              formattedDate,
+                              style: const TextStyle(
+                                fontSize: 12.5,
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                                fontFeatures: [FontFeature.tabularFigures()],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // ── Hero Section (Airbnb / Stripe Executive Typography) ─────
+                FadeTransition(
+                  opacity: _headerFade,
+                  child: isDesktop
+                      ? _buildDesktopHero()
+                      : _buildMobileHero(),
+                ),
+
+                const SizedBox(height: 30),
+
+                // ── Category Grid (Responsive: 3-column desktop / 1-column mobile)
+                if (isDesktop) ...[
+                  _buildDesktopCategoryRow(context),
+                ] else ...[
+                  _buildMobileCategoryColumn(context),
+                ],
+
+                const SizedBox(height: 32),
+
+                // ── Bottom Utility Strip ────────────────────────────────────
+                FadeTransition(
+                  opacity: _card3Fade,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                     decoration: BoxDecoration(
                       color: AppColors.surfaceCard,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.hairline),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
-                          color: const Color(0x06000000),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                          color: Color(0x03000000),
+                          blurRadius: 10,
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 7,
-                          height: 7,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.statusSuccess,
+                        const Icon(
+                          Icons.table_view_rounded,
+                          size: 18,
+                          color: AppColors.statusSuccess,
+                        ),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Text(
+                            'Standardized Excel export format (.xlsx) • Daily Housekeeping Log',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          formattedDate,
-                          style: const TextStyle(
-                            fontSize: 12.5,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                            fontFeatures: [FontFeature.tabularFigures()],
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => _showExitDialog(context),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(
+                                    Icons.logout_rounded,
+                                    size: 15,
+                                    color: AppColors.textMuted,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    'Exit Logbook',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textMuted,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 36),
-
-            // ── Hero Section (Airbnb / Stripe Typography) ───────────────────
-            FadeTransition(
-              opacity: _headerFade,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.coralDim,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.coralAccent.withOpacity(0.25)),
-                    ),
-                    child: const Text(
-                      'HOUSEKEEPING PORTAL',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.8,
-                        color: AppColors.coralAccent,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Laundry Logbook',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.9,
-                      height: 1.15,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Record clean linen handovers, F&B fabrics, and separate stained items for rewash.',
-                    style: TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w400,
-                      height: 1.5,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            // ── Category 1: Fren Linen ──────────────────────────────────────
-            FadeTransition(
-              opacity: _card1Fade,
-              child: _CategoryCard(
-                title: 'Fren Linen',
-                subtitle: 'Duvet covers, bedsheets, pillowcases, bath towels & batik cloth',
-                metaLabel: '8 standard items',
-                icon: Icons.king_bed_rounded,
-                accentColor: AppColors.catFren,
-                accentBg: AppColors.catFrenBg,
-                onTap: () => _navigateTo(
-                  context,
-                  const LinenFormScreen(category: LinenCategory.fren),
                 ),
-              ),
+              ],
             ),
+          );
+        },
+      ),
+    );
+  }
 
-            const SizedBox(height: 14),
-
-            // ── Category 2: Fast Items ──────────────────────────────────────
-            FadeTransition(
-              opacity: _card2Fade,
-              child: _CategoryCard(
-                title: 'Fast Items',
-                subtitle: 'Bath mats, mukena, sejadah, sarung & hotel flags',
-                metaLabel: '6 specialized items',
-                icon: Icons.dry_cleaning_rounded,
-                accentColor: AppColors.catFast,
-                accentBg: AppColors.catFastBg,
-                onTap: () => _navigateTo(
-                  context,
-                  const LinenFormScreen(category: LinenCategory.fast),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            // ── Category 3: Rewash Station (Standalone) ─────────────────────
-            FadeTransition(
-              opacity: _card3Fade,
-              child: _CategoryCard(
-                title: 'Rewash Station',
-                subtitle: 'Dedicated station for stained, torn, or defective Fren & Fast linens',
-                metaLabel: 'Fren & Fast Station',
-                icon: Icons.autorenew_rounded,
-                accentColor: AppColors.catRewash,
-                accentBg: AppColors.catRewashBg,
-                onTap: () => _navigateTo(
-                  context,
-                  const RewashScreen(),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // ── Footer Bar ──────────────────────────────────────────────────
-            FadeTransition(
-              opacity: _card3Fade,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  Widget _buildDesktopHero() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        // Left Column: Headline and description
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceCard,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.hairline),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0x04000000),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  color: AppColors.coralDim,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.coralAccent.withOpacity(0.25)),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.table_view_rounded,
-                      size: 16,
-                      color: AppColors.statusSuccess,
-                    ),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        'Direct Excel export ready (.xlsx)',
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => _showExitDialog(context),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(
-                            Icons.logout_rounded,
-                            size: 14,
-                            color: AppColors.textMuted,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            'Exit',
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              color: AppColors.textMuted,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                child: const Text(
+                  'HOTEL HOUSEKEEPING PORTAL',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.8,
+                    color: AppColors.coralAccent,
+                  ),
                 ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Laundry & Linen Logbook',
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -1.0,
+                  height: 1.15,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Record clean linen handovers, specialized F&B fabrics, and separate stained or damaged linens for rewash.',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  height: 1.5,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 24),
+        // Right Column: Quick Status Widget
+        Expanded(
+          flex: 2,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceCard,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.hairline),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x04000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatPill('3 Categories', 'Fren, Fast, Rewash', Icons.layers_rounded, AppColors.brandMagenta),
+                Container(width: 1, height: 36, color: AppColors.hairline),
+                _buildStatPill('Export Ready', 'Excel Format (.xlsx)', Icons.file_download_done_rounded, AppColors.statusSuccess),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatPill(String title, String subtitle, IconData icon, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, size: 18, color: color),
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textMuted,
               ),
             ),
           ],
         ),
-      ),
+      ],
+    );
+  }
+
+  Widget _buildMobileHero() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.coralDim,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.coralAccent.withOpacity(0.25)),
+          ),
+          child: const Text(
+            'HOUSEKEEPING PORTAL',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
+              color: AppColors.coralAccent,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        const Text(
+          'Laundry Logbook',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.9,
+            height: 1.15,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Record clean linen handovers, F&B fabrics, and separate stained items for rewash.',
+          style: TextStyle(
+            fontSize: 14.5,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopCategoryRow(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Fren Linen Card
+        Expanded(
+          child: FadeTransition(
+            opacity: _card1Fade,
+            child: _CategoryCardDesktop(
+              title: 'Fren Linen',
+              subtitle: 'Bedding, duvet covers, sheets, pillowcases & bath towels',
+              metaLabel: '8 standard items',
+              tags: const ['Duvet', 'Bedsheet', 'Bath Towel', 'Batik Cloth'],
+              icon: Icons.king_bed_rounded,
+              accentColor: AppColors.catFren,
+              accentBg: AppColors.catFrenBg,
+              onTap: () => _navigateTo(
+                context,
+                const LinenFormScreen(category: LinenCategory.fren),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
+
+        // Fast Items Card
+        Expanded(
+          child: FadeTransition(
+            opacity: _card2Fade,
+            child: _CategoryCardDesktop(
+              title: 'Fast Items',
+              subtitle: 'Bath mats, mukena, sejadah, sarung & hotel flags',
+              metaLabel: '6 specialized items',
+              tags: const ['Bath Mat', 'Mukena', 'Sejadah', 'Hotel Flag'],
+              icon: Icons.dry_cleaning_rounded,
+              accentColor: AppColors.catFast,
+              accentBg: AppColors.catFastBg,
+              onTap: () => _navigateTo(
+                context,
+                const LinenFormScreen(category: LinenCategory.fast),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
+
+        // Rewash Station Card
+        Expanded(
+          child: FadeTransition(
+            opacity: _card3Fade,
+            child: _CategoryCardDesktop(
+              title: 'Rewash Station',
+              subtitle: 'Dedicated station for stained, torn, or defective linens',
+              metaLabel: 'Fren & Fast Station',
+              tags: const ['Stain Logs', 'Dual Tab', 'Defects', 'Rewash'],
+              icon: Icons.autorenew_rounded,
+              accentColor: AppColors.catRewash,
+              accentBg: AppColors.catRewashBg,
+              onTap: () => _navigateTo(
+                context,
+                const RewashScreen(),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileCategoryColumn(BuildContext context) {
+    return Column(
+      children: [
+        FadeTransition(
+          opacity: _card1Fade,
+          child: _CategoryCardMobile(
+            title: 'Fren Linen',
+            subtitle: 'Duvet covers, bedsheets, pillowcases, bath towels & batik cloth',
+            metaLabel: '8 standard items',
+            icon: Icons.king_bed_rounded,
+            accentColor: AppColors.catFren,
+            accentBg: AppColors.catFrenBg,
+            onTap: () => _navigateTo(
+              context,
+              const LinenFormScreen(category: LinenCategory.fren),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        FadeTransition(
+          opacity: _card2Fade,
+          child: _CategoryCardMobile(
+            title: 'Fast Items',
+            subtitle: 'Bath mats, mukena, sejadah, sarung & hotel flags',
+            metaLabel: '6 specialized items',
+            icon: Icons.dry_cleaning_rounded,
+            accentColor: AppColors.catFast,
+            accentBg: AppColors.catFastBg,
+            onTap: () => _navigateTo(
+              context,
+              const LinenFormScreen(category: LinenCategory.fast),
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        FadeTransition(
+          opacity: _card3Fade,
+          child: _CategoryCardMobile(
+            title: 'Rewash Station',
+            subtitle: 'Dedicated station for stained, torn, or defective Fren & Fast linens',
+            metaLabel: 'Fren & Fast Station',
+            icon: Icons.autorenew_rounded,
+            accentColor: AppColors.catRewash,
+            accentBg: AppColors.catRewashBg,
+            onTap: () => _navigateTo(
+              context,
+              const RewashScreen(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -366,9 +611,213 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-// ── Category Card Component (Emil Kowalski Physics) ───────────────────────────
+// ── Desktop Category Card Component ──────────────────────────────────────────
 
-class _CategoryCard extends StatefulWidget {
+class _CategoryCardDesktop extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final String metaLabel;
+  final List<String> tags;
+  final IconData icon;
+  final Color accentColor;
+  final Color accentBg;
+  final VoidCallback onTap;
+
+  const _CategoryCardDesktop({
+    required this.title,
+    required this.subtitle,
+    required this.metaLabel,
+    required this.tags,
+    required this.icon,
+    required this.accentColor,
+    required this.accentBg,
+    required this.onTap,
+  });
+
+  @override
+  State<_CategoryCardDesktop> createState() => _CategoryCardDesktopState();
+}
+
+class _CategoryCardDesktopState extends State<_CategoryCardDesktop> {
+  bool _isPressed = false;
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final scale = _isPressed ? 0.985 : 1.0;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: scale,
+          duration: AppMotion.quick,
+          curve: AppMotion.easeSmoothOut,
+          child: AnimatedContainer(
+            duration: AppMotion.quick,
+            curve: AppMotion.easeSmoothOut,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: _isHovered ? AppColors.surfaceCardHover : AppColors.surfaceCard,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: _isHovered
+                    ? widget.accentColor.withOpacity(0.45)
+                    : AppColors.hairline,
+                width: 1.3,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _isHovered
+                      ? widget.accentColor.withOpacity(0.09)
+                      : const Color(0x050F172A),
+                  blurRadius: _isHovered ? 24 : 10,
+                  offset: Offset(0, _isHovered ? 8 : 3),
+                ),
+                const BoxShadow(
+                  color: Color(0x02000000),
+                  blurRadius: 3,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header row: Icon on left, meta badge on right
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: widget.accentBg,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: widget.accentColor.withOpacity(0.25),
+                        ),
+                      ),
+                      child: Icon(
+                        widget.icon,
+                        color: widget.accentColor,
+                        size: 26,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: widget.accentBg,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: widget.accentColor.withOpacity(0.25),
+                        ),
+                      ),
+                      child: Text(
+                        widget.metaLabel,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                          color: widget.accentColor,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+
+                // Title
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.4,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+
+                // Subtitle
+                Text(
+                  widget.subtitle,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                    height: 1.45,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 16),
+
+                // Pill tags
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: widget.tags.map((tag) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfacePill,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: AppColors.hairline),
+                      ),
+                      child: Text(
+                        tag,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 20),
+
+                // Action Footer Button
+                Row(
+                  children: [
+                    Text(
+                      'Open Logbook',
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w700,
+                        color: widget.accentColor,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    AnimatedSlide(
+                      duration: AppMotion.quick,
+                      offset: _isHovered ? const Offset(0.25, 0) : Offset.zero,
+                      child: Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 16,
+                        color: widget.accentColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Mobile Category Card Component ────────────────────────────────────────────
+
+class _CategoryCardMobile extends StatefulWidget {
   final String title;
   final String subtitle;
   final String metaLabel;
@@ -377,7 +826,7 @@ class _CategoryCard extends StatefulWidget {
   final Color accentBg;
   final VoidCallback onTap;
 
-  const _CategoryCard({
+  const _CategoryCardMobile({
     required this.title,
     required this.subtitle,
     required this.metaLabel,
@@ -388,16 +837,15 @@ class _CategoryCard extends StatefulWidget {
   });
 
   @override
-  State<_CategoryCard> createState() => _CategoryCardState();
+  State<_CategoryCardMobile> createState() => _CategoryCardMobileState();
 }
 
-class _CategoryCardState extends State<_CategoryCard> {
+class _CategoryCardMobileState extends State<_CategoryCardMobile> {
   bool _isPressed = false;
   bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    // Emil Kowalski rule: Press scales to 0.98 over 160ms ease-out
     final scale = _isPressed ? 0.98 : 1.0;
 
     return MouseRegion(
@@ -434,17 +882,16 @@ class _CategoryCardState extends State<_CategoryCard> {
                   blurRadius: _isHovered ? 20 : 8,
                   offset: Offset(0, _isHovered ? 6 : 2),
                 ),
-                BoxShadow(
-                  color: const Color(0x03000000),
+                const BoxShadow(
+                  color: Color(0x03000000),
                   blurRadius: 2,
-                  offset: const Offset(0, 1),
+                  offset: Offset(0, 1),
                 ),
               ],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Icon Container: Concentric (R_outer 18, pad 18, R_inner 12)
                 Container(
                   width: 48,
                   height: 48,
@@ -462,8 +909,6 @@ class _CategoryCardState extends State<_CategoryCard> {
                   ),
                 ),
                 const SizedBox(width: 16),
-
-                // Text Description Block
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -484,7 +929,6 @@ class _CategoryCardState extends State<_CategoryCard> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Subtle Meta Tag
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
@@ -520,9 +964,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                     ],
                   ),
                 ),
-
                 const SizedBox(width: 10),
-                // Smooth Animated Chevron
                 AnimatedSlide(
                   duration: AppMotion.quick,
                   offset: _isHovered ? const Offset(0.2, 0) : Offset.zero,

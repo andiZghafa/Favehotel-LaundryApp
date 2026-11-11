@@ -3,7 +3,8 @@ import 'package:laundry_app/theme/app_theme.dart';
 
 /// Luminous, executive hospitality background.
 /// Clean porcelain canvas with subtle atmospheric ambient warmth.
-/// Responsive desktop-centering container with smooth scrolling.
+/// Responsive desktop container (defaults to 1140px max-width on widescreen)
+/// eliminating the empty desert on desktop while keeping mobile tight and focused.
 class AppBackground extends StatelessWidget {
   final Widget child;
   final bool applySafeArea;
@@ -13,7 +14,7 @@ class AppBackground extends StatelessWidget {
     super.key,
     required this.child,
     this.applySafeArea = true,
-    this.maxWidth = 640,
+    this.maxWidth = 1140,
   });
 
   @override
@@ -28,11 +29,11 @@ class AppBackground extends StatelessWidget {
         children: [
           // Ambient Warmth 1: Soft brand rose glow at top-right
           Positioned(
-            top: -100,
-            right: -60,
+            top: -120,
+            right: -80,
             child: Container(
-              width: 480,
-              height: 480,
+              width: size.width > 1200 ? 640 : 480,
+              height: size.width > 1200 ? 640 : 480,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -44,13 +45,13 @@ class AppBackground extends StatelessWidget {
               ),
             ),
           ),
-          // Ambient Warmth 2: Soft lavender glow at top-left
+          // Ambient Warmth 2: Soft lavender glow at bottom-left
           Positioned(
-            top: 140,
-            left: -80,
+            bottom: -100,
+            left: -100,
             child: Container(
-              width: 380,
-              height: 380,
+              width: 520,
+              height: 520,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
