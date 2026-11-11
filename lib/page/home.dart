@@ -440,8 +440,10 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildDesktopCategoryRow(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // IntrinsicHeight stretches all 3 cards to match the tallest one
+    return IntrinsicHeight(
+      child: Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Fren Linen Card
         Expanded(
@@ -505,7 +507,7 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
       ],
-    );
+    ));
   }
 
   Widget _buildMobileCategoryColumn(BuildContext context) {
@@ -662,6 +664,7 @@ class _CategoryCardDesktopState extends State<_CategoryCardDesktop> {
           child: AnimatedContainer(
             duration: AppMotion.quick,
             curve: AppMotion.easeSmoothOut,
+            height: double.infinity,
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
               color: _isHovered ? AppColors.surfaceCardHover : AppColors.surfaceCard,
@@ -782,6 +785,9 @@ class _CategoryCardDesktopState extends State<_CategoryCardDesktop> {
                   }).toList(),
                 ),
                 const SizedBox(height: 20),
+
+                // Push footer to card bottom regardless of tag row count
+                const Spacer(),
 
                 // Action Footer Button
                 Row(

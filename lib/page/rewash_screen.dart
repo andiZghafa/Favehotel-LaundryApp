@@ -310,18 +310,21 @@ class _RewashScreenState extends State<RewashScreen> {
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
                     final item = filteredItems[index];
-                    return LinenCounterCard(
-                      key: ValueKey('${_selectedTabIndex}_$item'),
-                      itemName: item,
-                      count: activeMap[item] ?? 0,
-                      note: activeNotes[item] ?? '',
-                      isRewash: true,
-                      onCountChanged: (newCount) {
-                        setState(() => activeMap[item] = newCount);
-                      },
-                      onNoteChanged: (newNote) {
-                        setState(() => activeNotes[item] = newNote);
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: LinenCounterCard(
+                        key: ValueKey('${_selectedTabIndex}_$item'),
+                        itemName: item,
+                        count: activeMap[item] ?? 0,
+                        note: activeNotes[item] ?? '',
+                        isRewash: true,
+                        onCountChanged: (newCount) {
+                          setState(() => activeMap[item] = newCount);
+                        },
+                        onNoteChanged: (newNote) {
+                          setState(() => activeNotes[item] = newNote);
+                        },
+                      ),
                     );
                   },
                 );

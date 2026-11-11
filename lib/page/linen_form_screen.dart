@@ -264,18 +264,21 @@ class _LinenFormScreenState extends State<LinenFormScreen> {
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
                     final item = filteredItems[index];
-                    return LinenCounterCard(
-                      key: ValueKey(item),
-                      itemName: item,
-                      count: _items[item] ?? 0,
-                      note: _notes[item] ?? '',
-                      isRewash: false,
-                      onCountChanged: (newCount) {
-                        setState(() => _items[item] = newCount);
-                      },
-                      onNoteChanged: (newNote) {
-                        setState(() => _notes[item] = newNote);
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: LinenCounterCard(
+                        key: ValueKey(item),
+                        itemName: item,
+                        count: _items[item] ?? 0,
+                        note: _notes[item] ?? '',
+                        isRewash: false,
+                        onCountChanged: (newCount) {
+                          setState(() => _items[item] = newCount);
+                        },
+                        onNoteChanged: (newNote) {
+                          setState(() => _notes[item] = newNote);
+                        },
+                      ),
                     );
                   },
                 );

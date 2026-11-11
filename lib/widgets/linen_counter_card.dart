@@ -29,7 +29,6 @@ class LinenCounterCard extends StatelessWidget {
     return AnimatedContainer(
       duration: AppMotion.quick,
       curve: AppMotion.easeSmoothOut,
-      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: AppColors.surfaceCard,
