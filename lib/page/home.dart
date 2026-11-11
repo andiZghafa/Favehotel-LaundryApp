@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:laundry_app/models/linen_models.dart';
 import 'package:laundry_app/page/linen_form_screen.dart';
+import 'package:laundry_app/page/monthly_recap_screen.dart';
 import 'package:laundry_app/page/rewash_screen.dart';
 import 'package:laundry_app/theme/app_theme.dart';
 import 'package:laundry_app/widgets/app_background.dart';
@@ -133,6 +134,39 @@ class _HomeScreenState extends State<HomeScreen>
                         const SizedBox(width: 12),
                       ],
 
+                      // Monthly Recap Action Chip
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => _navigateTo(context, const MonthlyRecapScreen()),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: AppColors.brandMagentaLight,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: AppColors.brandMagenta.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.calendar_month_rounded, size: 14, color: AppColors.brandMagenta),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Rekap Bulanan',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.brandMagenta,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+
                       // Shift & Date Chip
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
@@ -232,6 +266,36 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ),
                         ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => _navigateTo(context, const MonthlyRecapScreen()),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(
+                                    Icons.summarize_outlined,
+                                    size: 15,
+                                    color: AppColors.brandMagenta,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    'Rekap Bulanan',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.brandMagenta,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Material(
                           color: Colors.transparent,
                           child: InkWell(

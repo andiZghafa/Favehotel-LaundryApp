@@ -2,6 +2,7 @@ import 'dart:ui' show FontFeature;
 import 'package:flutter/material.dart';
 import 'package:laundry_app/page/home.dart';
 import 'package:laundry_app/services/excel_service.dart';
+import 'package:laundry_app/services/supabase_service.dart';
 import 'package:laundry_app/theme/app_theme.dart';
 import 'package:laundry_app/widgets/app_background.dart';
 
@@ -104,6 +105,15 @@ class _SummaryExportScreenState extends State<SummaryExportScreen> {
         notes: widget.notes,
       );
     }
+
+    // Auto-save to Supabase in the background (never blocks UI or download)
+    SupabaseService.saveLog(
+      category: widget.categoryName,
+      handlerName: handler,
+      items: widget.items,
+      notes: widget.notes,
+      secondaryItems: widget.secondaryItems,
+    );
 
     setState(() {
       _isExporting = false;
