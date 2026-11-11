@@ -104,19 +104,14 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
       _errorMessage = null;
     });
 
-    // Valid check: Check against default PIN or query Supabase
-    final bool isKnownPin = cleanPin == SupabaseService.defaultPin ||
-        cleanPin.toLowerCase() == 'fave0925' ||
-        cleanPin == '0925';
-
-    final logs = await SupabaseService.fetchMonthlyLogs(
+    final result = await SupabaseService.fetchMonthlyLogs(
       pin: cleanPin,
       month: _selectedDate.month,
       year: _selectedDate.year,
     );
 
-    // If wrong PIN
-    if (!isKnownPin && logs.isEmpty) {
+    // If server rejected the passcode
+    if (!result.isAuthorized) {
       _failedAttempts++;
       _shakeController.forward(from: 0.0);
 
@@ -146,7 +141,7 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
 
     setState(() {
       _unlockedPin = cleanPin;
-      _logs = logs;
+      _logs = result.logs;
       _isLoading = false;
     });
   }
@@ -159,14 +154,14 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
       _errorMessage = null;
     });
 
-    final logs = await SupabaseService.fetchMonthlyLogs(
+    final result = await SupabaseService.fetchMonthlyLogs(
       pin: _unlockedPin!,
       month: _selectedDate.month,
       year: _selectedDate.year,
     );
 
     setState(() {
-      _logs = logs;
+      _logs = result.logs;
       _isLoading = false;
     });
   }

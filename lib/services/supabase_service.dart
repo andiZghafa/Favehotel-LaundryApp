@@ -6,6 +6,18 @@ import 'package:laundry_app/services/excel_service.dart';
 import 'package:laundry_app/services/file_saver.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 
+class FetchLogsResult {
+  final bool isAuthorized;
+  final List<LinenLogEntry> logs;
+  final String? errorMessage;
+
+  FetchLogsResult({
+    required this.isAuthorized,
+    required this.logs,
+    this.errorMessage,
+  });
+}
+
 /// Single log entry representation returned by Supabase
 class LinenLogEntry {
   final String id;
@@ -64,11 +76,6 @@ class SupabaseService {
   static const String anonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
     defaultValue: 'sb_publishable_s3rQL-l_H_t86Y2OTs_4ag_bxsDl02o',
-  );
-
-  static const String defaultPin = String.fromEnvironment(
-    'HOTEL_PIN',
-    defaultValue: 'fave0925',
   );
 
   /// Auto-detects whether Supabase sync should be active.
@@ -144,8 +151,8 @@ class SupabaseService {
     }
   }
 
-  /// Securely query logs for a specific month using the hotel PIN
-  static Future<List<LinenLogEntry>> fetchMonthlyLogs({
+  /// Securely query logs for a specific month using the hotel passcode (verified exclusively by Supabase)
+  static Future<FetchLogsResult> fetchMonthlyLogs({
     required String pin,
     required int month,
     required int year,
@@ -153,7 +160,7 @@ class SupabaseService {
     try {
       final payload = jsonEncode({
         'pin': pin.trim(),
-        'target_month': month,
+        'target_month': month.toString(),
         'target_year': year,
       });
 
@@ -165,14 +172,25 @@ class SupabaseService {
 
       if (res.statusCode == 200) {
         final List<dynamic> list = jsonDecode(res.body);
-        return list.map((item) => LinenLogEntry.fromJson(item)).toList();
+        final logs = list.map((item) => LinenLogEntry.fromJson(item)).toList();
+        return FetchLogsResult(isAuthorized: true, logs: logs);
       } else {
-        if (kDebugMode) print('Fetch logs error code ${res.statusCode}: ${res.body}');
-        return [];
+        final bodyStr = res.body.toLowerCase();
+        final isInvalidPin = bodyStr.contains('invalid_pin') || res.statusCode == 400 || res.statusCode == 401;
+        if (kDebugMode) print('Fetch logs response code ${res.statusCode}: ${res.body}');
+        return FetchLogsResult(
+          isAuthorized: !isInvalidPin,
+          logs: [],
+          errorMessage: isInvalidPin ? 'Passcode salah.' : 'Gagal terhubung ke database.',
+        );
       }
     } catch (e) {
       if (kDebugMode) print('Supabase fetchMonthlyLogs error: $e');
-      return [];
+      return FetchLogsResult(
+        isAuthorized: false,
+        logs: [],
+        errorMessage: 'Gagal terhubung ke database.',
+      );
     }
   }
 
