@@ -132,40 +132,40 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                         const SizedBox(width: 12),
-                      ],
 
-                      // Monthly Recap Action Chip
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => _navigateTo(context, const MonthlyRecapScreen()),
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: AppColors.brandMagentaLight,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.brandMagenta.withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(Icons.calendar_month_rounded, size: 14, color: AppColors.brandMagenta),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Rekap Bulanan',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.brandMagenta,
+                        // Monthly Recap Action Chip (Desktop header)
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => _navigateTo(context, const MonthlyRecapScreen()),
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: AppColors.brandMagentaLight,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: AppColors.brandMagenta.withOpacity(0.3)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(Icons.calendar_month_rounded, size: 14, color: AppColors.brandMagenta),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    'Rekap Bulanan',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.brandMagenta,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
+                        const SizedBox(width: 12),
+                      ],
 
                       // Shift & Date Chip
                       Container(
@@ -497,6 +497,39 @@ class _HomeScreenState extends State<HomeScreen>
             fontWeight: FontWeight.w400,
             height: 1.5,
             color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 14),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _navigateTo(context, const MonthlyRecapScreen()),
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.hairline),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.calendar_month_rounded, size: 16, color: AppColors.brandMagenta),
+                  SizedBox(width: 8),
+                  Text(
+                    'Rekap Bulanan (Monthly Master)',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.brandMagenta,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.brandMagenta),
+                ],
+              ),
+            ),
           ),
         ),
       ],

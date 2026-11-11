@@ -64,7 +64,7 @@ class SupabaseService {
 
   static const String defaultPin = String.fromEnvironment(
     'HOTEL_PIN',
-    defaultValue: '8821',
+    defaultValue: '0925',
   );
 
   static Map<String, String> get _headers => {
@@ -153,7 +153,7 @@ class SupabaseService {
     }
   }
 
-  /// Export an aggregated Monthly Master Spreadsheet (.xlsx)
+  /// Export an executive-grade Monthly Master Spreadsheet (.xlsx)
   static Future<ExcelExportResult> exportMonthlyRecapExcel({
     required int month,
     required int year,
@@ -161,32 +161,37 @@ class SupabaseService {
   }) async {
     try {
       final monthName = DateFormat('MMMM yyyy').format(DateTime(year, month));
+      final generatedTime = DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now());
       final xls.Workbook workbook = xls.Workbook();
 
       // ── Sheet 1: Monthly Aggregated Summary ──────────────────────────────
       final xls.Worksheet summarySheet = workbook.worksheets[0];
-      summarySheet.name = 'MONTHLY SUMMARY';
+      summarySheet.name = 'REKAP BULANAN';
 
-      // Header Banner
-      final titleRange = summarySheet.getRangeByName('A1:D1');
+      // 1. Hotel Brand Banner
+      final bannerRange = summarySheet.getRangeByName('A1:E1');
+      bannerRange.merge();
+      bannerRange.setText('FAVEHOTEL PADJAJARAN - BOGOR');
+      bannerRange.cellStyle.fontSize = 15;
+      bannerRange.cellStyle.bold = true;
+      bannerRange.cellStyle.fontColor = '#FFFFFF';
+      bannerRange.cellStyle.backColor = '#900C46';
+
+      final titleRange = summarySheet.getRangeByName('A2:E2');
       titleRange.merge();
-      titleRange.setText('FAVEHOTEL LAUNDRY - REKAP BULANAN ($monthName)');
-      titleRange.cellStyle.fontSize = 13;
+      titleRange.setText('HOUSEKEEPING LAUNDRY LOGBOOK — REKAP BULANAN ($monthName)');
+      titleRange.cellStyle.fontSize = 12;
       titleRange.cellStyle.bold = true;
-      titleRange.cellStyle.fontColor = '#FFFFFF';
-      titleRange.cellStyle.backColor = '#900C46';
+      titleRange.cellStyle.fontColor = '#900C46';
+      titleRange.cellStyle.backColor = '#FDF2F8';
 
-      // Table headers
-      final summaryHeaders = ['Item / Linen Name', 'Total Clean (FREN+FAST)', 'Total Rewash', 'Grand Total'];
-      for (int i = 0; i < summaryHeaders.length; i++) {
-        final cell = summarySheet.getRangeByIndex(3, i + 1);
-        cell.setText(summaryHeaders[i]);
-        cell.cellStyle.bold = true;
-        cell.cellStyle.backColor = '#F1F5F9';
-        cell.cellStyle.fontColor = '#0F172A';
-      }
+      final metaRange = summarySheet.getRangeByName('A3:E3');
+      metaRange.merge();
+      metaRange.setText('Lokasi: Jl. Raya Pajajaran No.77, Bogor • Dicetak pada: $generatedTime • Total Sesi: ${logs.length}');
+      metaRange.cellStyle.fontSize = 9.5;
+      metaRange.cellStyle.fontColor = '#64748B';
 
-      // Aggregate item counts across all logs
+      // 2. Aggregate Data
       final Map<String, int> cleanCounts = {};
       final Map<String, int> rewashCounts = {};
       final Set<String> allItemNames = {};
@@ -207,58 +212,102 @@ class SupabaseService {
         });
       }
 
-      final sortedItems = allItemNames.toList()..sort();
-      int summaryRow = 4;
       int grandClean = 0;
       int grandRewash = 0;
+      for (var c in cleanCounts.values) { grandClean += c; }
+      for (var r in rewashCounts.values) { grandRewash += r; }
+      final int grandTotalAll = grandClean + grandRewash;
+
+      // 3. Table Headers
+      final summaryHeaders = ['Item / Linen Name', 'Linen Bersih (Pcs)', 'Rewash / Noda (Pcs)', 'Total Handover (Pcs)', 'Kontribusi (%)'];
+      for (int i = 0; i < summaryHeaders.length; i++) {
+        final cell = summarySheet.getRangeByIndex(5, i + 1);
+        cell.setText(summaryHeaders[i]);
+        cell.cellStyle.bold = true;
+        cell.cellStyle.backColor = '#900C46';
+        cell.cellStyle.fontColor = '#FFFFFF';
+      }
+
+      final sortedItems = allItemNames.toList()..sort();
+      int summaryRow = 6;
 
       for (var item in sortedItems) {
         final clean = cleanCounts[item] ?? 0;
         final rewash = rewashCounts[item] ?? 0;
         final total = clean + rewash;
-
-        grandClean += clean;
-        grandRewash += rewash;
+        final pct = grandTotalAll > 0 ? (total / grandTotalAll * 100).toStringAsFixed(1) + '%' : '0.0%';
 
         summarySheet.getRangeByIndex(summaryRow, 1).setText(item);
         summarySheet.getRangeByIndex(summaryRow, 2).setNumber(clean.toDouble());
         summarySheet.getRangeByIndex(summaryRow, 3).setNumber(rewash.toDouble());
         summarySheet.getRangeByIndex(summaryRow, 4).setNumber(total.toDouble());
+        summarySheet.getRangeByIndex(summaryRow, 5).setText(pct);
+
+        // Zebra striping
+        if (summaryRow % 2 == 1) {
+          summarySheet.getRangeByName('A$summaryRow:E$summaryRow').cellStyle.backColor = '#F8FAFC';
+        }
+
         summaryRow++;
       }
 
-      // Total row
-      summarySheet.getRangeByIndex(summaryRow, 1).setText('TOTAL PIECES');
-      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.bold = true;
-      summarySheet.getRangeByIndex(summaryRow, 2).setNumber(grandClean.toDouble());
-      summarySheet.getRangeByIndex(summaryRow, 2).cellStyle.bold = true;
-      summarySheet.getRangeByIndex(summaryRow, 3).setNumber(grandRewash.toDouble());
-      summarySheet.getRangeByIndex(summaryRow, 3).cellStyle.bold = true;
-      summarySheet.getRangeByIndex(summaryRow, 4).setNumber((grandClean + grandRewash).toDouble());
-      summarySheet.getRangeByIndex(summaryRow, 4).cellStyle.bold = true;
+      // Grand Total Row
+      final totalRowRange = summarySheet.getRangeByName('A$summaryRow:E$summaryRow');
+      totalRowRange.cellStyle.bold = true;
+      totalRowRange.cellStyle.backColor = '#FDF2F8';
 
-      for (int i = 1; i <= 4; i++) {
+      summarySheet.getRangeByIndex(summaryRow, 1).setText('GRAND TOTAL');
+      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.fontColor = '#900C46';
+      summarySheet.getRangeByIndex(summaryRow, 2).setNumber(grandClean.toDouble());
+      summarySheet.getRangeByIndex(summaryRow, 3).setNumber(grandRewash.toDouble());
+      summarySheet.getRangeByIndex(summaryRow, 4).setNumber(grandTotalAll.toDouble());
+      summarySheet.getRangeByIndex(summaryRow, 5).setText('100.0%');
+
+      // 4. Executive KPI Summary Box
+      summaryRow += 2;
+      summarySheet.getRangeByIndex(summaryRow, 1).setText('RINGKASAN EKSEKUTIF:');
+      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.bold = true;
+      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.fontColor = '#900C46';
+      summaryRow++;
+
+      final double rewashRate = grandTotalAll > 0 ? (grandRewash / grandTotalAll * 100) : 0.0;
+      final kpis = [
+        ['Total Linen Bersih Terlayani', '$grandClean pcs'],
+        ['Total Linen Rewash / Defect', '$grandRewash pcs'],
+        ['Total Putaran Handover Linen', '$grandTotalAll pcs'],
+        ['Tingkat Rewash (Rewash Rate)', '${rewashRate.toStringAsFixed(2)}%'],
+        ['Total Sesi / Shift Input', '${logs.length} kali'],
+      ];
+
+      for (var kpi in kpis) {
+        summarySheet.getRangeByIndex(summaryRow, 1).setText(kpi[0]);
+        summarySheet.getRangeByIndex(summaryRow, 2).setText(kpi[1]);
+        summarySheet.getRangeByIndex(summaryRow, 2).cellStyle.bold = true;
+        summaryRow++;
+      }
+
+      for (int i = 1; i <= 5; i++) {
         summarySheet.autoFitColumn(i);
       }
 
       // ── Sheet 2: Daily Log Details ───────────────────────────────────────
-      final xls.Worksheet detailSheet = workbook.worksheets.addWithName('LOG DETAILS');
-      final detailHeaders = ['Date', 'Time', 'Category', 'Handler Name', 'Total Items', 'Items Breakdown', 'Notes'];
+      final xls.Worksheet detailSheet = workbook.worksheets.addWithName('DETAIL LOG HARIAN');
+      final detailHeaders = ['Tanggal', 'Waktu', 'Kategori', 'Petugas / Handler', 'Total (Pcs)', 'Rincian Linen', 'Catatan / Noda'];
 
-      final detailTitle = detailSheet.getRangeByName('A1:G1');
-      detailTitle.merge();
-      detailTitle.setText('DAILY LOG HISTORY - $monthName');
-      detailTitle.cellStyle.fontSize = 13;
-      detailTitle.cellStyle.bold = true;
-      detailTitle.cellStyle.fontColor = '#FFFFFF';
-      detailTitle.cellStyle.backColor = '#900C46';
+      final detailBanner = detailSheet.getRangeByName('A1:G1');
+      detailBanner.merge();
+      detailBanner.setText('FAVEHOTEL PADJAJARAN BOGOR — RIWAYAT LOG HARIAN ($monthName)');
+      detailBanner.cellStyle.fontSize = 13;
+      detailBanner.cellStyle.bold = true;
+      detailBanner.cellStyle.fontColor = '#FFFFFF';
+      detailBanner.cellStyle.backColor = '#900C46';
 
       for (int i = 0; i < detailHeaders.length; i++) {
         final cell = detailSheet.getRangeByIndex(3, i + 1);
         cell.setText(detailHeaders[i]);
         cell.cellStyle.bold = true;
-        cell.cellStyle.backColor = '#F1F5F9';
-        cell.cellStyle.fontColor = '#0F172A';
+        cell.cellStyle.backColor = '#900C46';
+        cell.cellStyle.fontColor = '#FFFFFF';
       }
 
       int detailRow = 4;
@@ -276,6 +325,11 @@ class SupabaseService {
         detailSheet.getRangeByIndex(detailRow, 5).setNumber(log.totalPieces.toDouble());
         detailSheet.getRangeByIndex(detailRow, 6).setText(itemsText);
         detailSheet.getRangeByIndex(detailRow, 7).setText(notesText.isEmpty ? '-' : notesText);
+
+        if (detailRow % 2 == 1) {
+          detailSheet.getRangeByName('A$detailRow:G$detailRow').cellStyle.backColor = '#F8FAFC';
+        }
+
         detailRow++;
       }
 
@@ -292,13 +346,13 @@ class SupabaseService {
 
       return ExcelExportResult(
         success: true,
-        message: 'Monthly recap exported successfully!',
+        message: 'Rekap bulanan berhasil diexport ke Excel!',
         filePath: path,
       );
     } catch (e) {
       return ExcelExportResult(
         success: false,
-        message: 'Failed to export monthly recap: $e',
+        message: 'Gagal mengekspor rekap bulanan: $e',
       );
     }
   }
