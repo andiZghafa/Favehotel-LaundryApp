@@ -41,8 +41,10 @@ void main() {
     expect(html, contains('24 November 2026'));
     expect(html, contains('2 Handover(s)'));
 
-    // Print styles + clean full-width TOTAL row (no signature block)
+    // Print styles + clean full-width TOTAL row (no signature block, no clipped border)
     expect(html, contains('@media print'));
+    expect(html, contains('margin: 0;'));
+    expect(html, contains('border-collapse: separate;'));
     expect(html, contains('<td colspan="2" class="total-label">TOTAL</td>'));
     expect(html, isNot(contains('Prepared by')));
     expect(html, isNot(contains('Checked by')));

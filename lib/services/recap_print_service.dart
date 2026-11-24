@@ -244,13 +244,17 @@ class RecapPrintService {
     }
     table.items-table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-top: 1px solid #000;
+      border-left: 1px solid #000;
       margin-top: 4px;
       font-size: 10.5px;
     }
     .items-table th,
     .items-table td {
-      border: 1px solid #000;
+      border-right: 1px solid #000;
+      border-bottom: 1px solid #000;
       padding: 5px 7px;
       vertical-align: middle;
     }
@@ -285,7 +289,7 @@ class RecapPrintService {
     }
     @page {
       size: A4 portrait;
-      margin: 12mm;
+      margin: 0;
     }
     @media print {
       html, body {
@@ -300,8 +304,8 @@ class RecapPrintService {
       }
       .page {
         width: 100%;
-        min-height: 273mm;
-        padding: 0;
+        min-height: auto;
+        padding: 14mm 16mm;
         margin: 0;
         box-shadow: none;
       }
