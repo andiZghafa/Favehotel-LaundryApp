@@ -41,11 +41,12 @@ void main() {
     expect(html, contains('24 November 2026'));
     expect(html, contains('2 Handover(s)'));
 
-    // Signature block & print styles
-    expect(html, contains('Prepared by'));
-    expect(html, contains('Checked by'));
-    expect(html, contains('Approved by'));
+    // Print styles + clean full-width TOTAL row (no signature block)
     expect(html, contains('@media print'));
+    expect(html, contains('<td colspan="2" class="total-label">TOTAL</td>'));
+    expect(html, isNot(contains('Prepared by')));
+    expect(html, isNot(contains('Checked by')));
+    expect(html, isNot(contains('Approved by')));
 
     // HTML escaping + descending sort order:
     // '<script>alert(1)</script>' total = 100 (rewash 100, clean 0) -> row 1

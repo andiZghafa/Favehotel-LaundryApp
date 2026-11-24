@@ -174,16 +174,13 @@ class RecapPrintService {
       background: #fff;
       padding: 14mm 16mm;
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
-      display: flex;
-      flex-direction: column;
     }
     .letterhead {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1.5px solid #000;
+      margin-bottom: 12px;
     }
     .logo-img {
       height: 46px;
@@ -206,8 +203,8 @@ class RecapPrintService {
       letter-spacing: 0.8px;
     }
     .hotel-address {
-      text-align: right;
-      max-width: 58%;
+      text-align: left;
+      width: 48%;
       font-size: 10px;
       line-height: 1.38;
     }
@@ -276,10 +273,6 @@ class RecapPrintService {
       padding: 18px 8px;
       color: #444;
     }
-    .total-spacer {
-      border: none !important;
-      background: transparent !important;
-    }
     .total-label {
       text-align: right;
       font-weight: 700;
@@ -289,39 +282,6 @@ class RecapPrintService {
       text-align: right;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
-    }
-    .signatures {
-      margin-top: auto;
-      padding-top: 24px;
-    }
-    .sig-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      font-size: 10px;
-    }
-    .sig-table td {
-      border: 1px solid #000;
-      padding: 6px 8px;
-      text-align: center;
-      vertical-align: top;
-    }
-    .sig-role {
-      font-weight: 700;
-    }
-    .sig-dept {
-      color: #333;
-      font-size: 9.5px;
-      margin-top: 1px;
-    }
-    .sig-space {
-      height: 52px;
-    }
-    .sig-line {
-      border-top: 1px solid #555;
-      padding-top: 4px;
-      font-size: 9.5px;
-      color: #222;
     }
     @page {
       size: A4 portrait;
@@ -350,9 +310,6 @@ class RecapPrintService {
         print-color-adjust: exact;
       }
       .items-table tr {
-        break-inside: avoid;
-      }
-      .signatures {
         break-inside: avoid;
       }
     }
@@ -429,39 +386,13 @@ class RecapPrintService {
         <tbody>
           $rowsBuffer
           <tr>
-            <td class="total-spacer"></td>
-            <td class="total-label">TOTAL</td>
+            <td colspan="2" class="total-label">TOTAL</td>
             <td class="total-value">${intFormat.format(totalClean)}</td>
             <td class="total-value">${intFormat.format(totalRewash)}</td>
             <td class="total-value">${intFormat.format(grandTotal)}</td>
           </tr>
         </tbody>
       </table>
-
-      <div class="signatures">
-        <table class="sig-table">
-          <tr>
-            <td>
-              <div class="sig-role">Prepared by</div>
-              <div class="sig-dept">Housekeeping Staff</div>
-              <div class="sig-space"></div>
-              <div class="sig-line">Name &amp; Date</div>
-            </td>
-            <td>
-              <div class="sig-role">Checked by</div>
-              <div class="sig-dept">Housekeeping Supervisor</div>
-              <div class="sig-space"></div>
-              <div class="sig-line">Name &amp; Date</div>
-            </td>
-            <td>
-              <div class="sig-role">Approved by</div>
-              <div class="sig-dept">Hotel Manager</div>
-              <div class="sig-space"></div>
-              <div class="sig-line">Name &amp; Date</div>
-            </td>
-          </tr>
-        </table>
-      </div>
     </div>
   </div>
 </body>
@@ -479,11 +410,12 @@ class RecapPrintService {
     }
 
     String? logoBase64;
-    try {
-      final data = await rootBundle.load('assets/logo_clean.png');
-      logoBase64 = base64Encode(data.buffer.asUint8List());
-    } catch (_) {
-      logoBase64 = null;
+    for (final assetPath in ['assets/new_IKON.png', 'assets/New-IKON.png']) {
+      try {
+        final data = await rootBundle.load(assetPath);
+        logoBase64 = base64Encode(data.buffer.asUint8List());
+        break;
+      } catch (_) {}
     }
 
     final htmlContent = buildMonthlyRecapPrintHtml(
