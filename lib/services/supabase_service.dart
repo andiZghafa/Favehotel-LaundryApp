@@ -45,7 +45,9 @@ class LinenLogEntry {
 
     final rawCreatedAt = json['created_at']?.toString() ?? '';
     final parsedDate = DateTime.tryParse(rawCreatedAt);
-    final localCreatedAt = parsedDate != null ? parsedDate.toLocal() : DateTime.now();
+    final localCreatedAt = parsedDate != null
+        ? parsedDate.toLocal()
+        : DateTime.now();
 
     return LinenLogEntry(
       id: json['id']?.toString() ?? '',
@@ -92,10 +94,10 @@ class SupabaseService {
   }
 
   static Map<String, String> get _headers => {
-        'apikey': anonKey,
-        'Authorization': 'Bearer $anonKey',
-        'Content-Type': 'application/json',
-      };
+    'apikey': anonKey,
+    'Authorization': 'Bearer $anonKey',
+    'Content-Type': 'application/json',
+  };
 
   /// Save a session log into Supabase asynchronously (never blocks Excel export)
   static Future<bool> saveLog({
@@ -129,7 +131,9 @@ class SupabaseService {
 
       final payload = jsonEncode({
         'category': category.toUpperCase(),
-        'handler_name': handlerName.trim().isEmpty ? 'Housekeeping Staff' : handlerName.trim(),
+        'handler_name': handlerName.trim().isEmpty
+            ? 'Housekeeping Staff'
+            : handlerName.trim(),
         'items': cleanItems,
         'notes': cleanNotes,
         'secondary_items': cleanSecondary,
@@ -137,10 +141,7 @@ class SupabaseService {
 
       final res = await http.post(
         Uri.parse('$url/rest/v1/laundry_logs'),
-        headers: {
-          ..._headers,
-          'Prefer': 'return=minimal',
-        },
+        headers: {..._headers, 'Prefer': 'return=minimal'},
         body: payload,
       );
 
@@ -176,12 +177,18 @@ class SupabaseService {
         return FetchLogsResult(isAuthorized: true, logs: logs);
       } else {
         final bodyStr = res.body.toLowerCase();
-        final isInvalidPin = bodyStr.contains('invalid_pin') || res.statusCode == 400 || res.statusCode == 401;
-        if (kDebugMode) print('Fetch logs response code ${res.statusCode}: ${res.body}');
+        final isInvalidPin =
+            bodyStr.contains('invalid_pin') ||
+            res.statusCode == 400 ||
+            res.statusCode == 401;
+        if (kDebugMode)
+          print('Fetch logs response code ${res.statusCode}: ${res.body}');
         return FetchLogsResult(
           isAuthorized: !isInvalidPin,
           logs: [],
-          errorMessage: isInvalidPin ? 'Passcode salah.' : 'Gagal terhubung ke database.',
+          errorMessage: isInvalidPin
+              ? 'Passcode salah.'
+              : 'Gagal terhubung ke database.',
         );
       }
     } catch (e) {
@@ -202,7 +209,9 @@ class SupabaseService {
   }) async {
     try {
       final monthName = DateFormat('MMMM yyyy').format(DateTime(year, month));
-      final generatedTime = DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now());
+      final generatedTime = DateFormat(
+        'dd/MM/yyyy HH:mm',
+      ).format(DateTime.now());
       final xls.Workbook workbook = xls.Workbook();
 
       // ── Sheet 1: Monthly Aggregated Summary ──────────────────────────────
@@ -220,7 +229,9 @@ class SupabaseService {
 
       final titleRange = summarySheet.getRangeByName('A2:E2');
       titleRange.merge();
-      titleRange.setText('HOUSEKEEPING LAUNDRY LOGBOOK — REKAP BULANAN ($monthName)');
+      titleRange.setText(
+        'HOUSEKEEPING LAUNDRY LOGBOOK — REKAP BULANAN ($monthName)',
+      );
       titleRange.cellStyle.fontSize = 12;
       titleRange.cellStyle.bold = true;
       titleRange.cellStyle.fontColor = '#900C46';
@@ -228,7 +239,9 @@ class SupabaseService {
 
       final metaRange = summarySheet.getRangeByName('A3:E3');
       metaRange.merge();
-      metaRange.setText('Lokasi: Jl. Raya Pajajaran No.77, Bogor • Dicetak pada: $generatedTime • Total Sesi: ${logs.length}');
+      metaRange.setText(
+        'Lokasi: Jl. Raya Pajajaran No.77, Bogor • Dicetak pada: $generatedTime • Total Sesi: ${logs.length}',
+      );
       metaRange.cellStyle.fontSize = 9.5;
       metaRange.cellStyle.fontColor = '#64748B';
 
@@ -255,12 +268,22 @@ class SupabaseService {
 
       int grandClean = 0;
       int grandRewash = 0;
-      for (var c in cleanCounts.values) { grandClean += c; }
-      for (var r in rewashCounts.values) { grandRewash += r; }
+      for (var c in cleanCounts.values) {
+        grandClean += c;
+      }
+      for (var r in rewashCounts.values) {
+        grandRewash += r;
+      }
       final int grandTotalAll = grandClean + grandRewash;
 
       // 3. Table Headers
-      final summaryHeaders = ['Item / Linen Name', 'Linen Bersih (Pcs)', 'Rewash / Noda (Pcs)', 'Total Handover (Pcs)', 'Kontribusi (%)'];
+      final summaryHeaders = [
+        'Item / Linen Name',
+        'Linen Bersih (Pcs)',
+        'Rewash / Noda (Pcs)',
+        'Total Handover (Pcs)',
+        'Kontribusi (%)',
+      ];
       for (int i = 0; i < summaryHeaders.length; i++) {
         final cell = summarySheet.getRangeByIndex(5, i + 1);
         cell.setText(summaryHeaders[i]);
@@ -276,42 +299,64 @@ class SupabaseService {
         final clean = cleanCounts[item] ?? 0;
         final rewash = rewashCounts[item] ?? 0;
         final total = clean + rewash;
-        final pct = grandTotalAll > 0 ? (total / grandTotalAll * 100).toStringAsFixed(1) + '%' : '0.0%';
+        final pct = grandTotalAll > 0
+            ? (total / grandTotalAll * 100).toStringAsFixed(1) + '%'
+            : '0.0%';
 
         summarySheet.getRangeByIndex(summaryRow, 1).setText(item);
         summarySheet.getRangeByIndex(summaryRow, 2).setNumber(clean.toDouble());
-        summarySheet.getRangeByIndex(summaryRow, 3).setNumber(rewash.toDouble());
+        summarySheet
+            .getRangeByIndex(summaryRow, 3)
+            .setNumber(rewash.toDouble());
         summarySheet.getRangeByIndex(summaryRow, 4).setNumber(total.toDouble());
         summarySheet.getRangeByIndex(summaryRow, 5).setText(pct);
 
         // Zebra striping
         if (summaryRow % 2 == 1) {
-          summarySheet.getRangeByName('A$summaryRow:E$summaryRow').cellStyle.backColor = '#F8FAFC';
+          summarySheet
+                  .getRangeByName('A$summaryRow:E$summaryRow')
+                  .cellStyle
+                  .backColor =
+              '#F8FAFC';
         }
 
         summaryRow++;
       }
 
       // Grand Total Row
-      final totalRowRange = summarySheet.getRangeByName('A$summaryRow:E$summaryRow');
+      final totalRowRange = summarySheet.getRangeByName(
+        'A$summaryRow:E$summaryRow',
+      );
       totalRowRange.cellStyle.bold = true;
       totalRowRange.cellStyle.backColor = '#FDF2F8';
 
       summarySheet.getRangeByIndex(summaryRow, 1).setText('GRAND TOTAL');
-      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.fontColor = '#900C46';
-      summarySheet.getRangeByIndex(summaryRow, 2).setNumber(grandClean.toDouble());
-      summarySheet.getRangeByIndex(summaryRow, 3).setNumber(grandRewash.toDouble());
-      summarySheet.getRangeByIndex(summaryRow, 4).setNumber(grandTotalAll.toDouble());
+      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.fontColor =
+          '#900C46';
+      summarySheet
+          .getRangeByIndex(summaryRow, 2)
+          .setNumber(grandClean.toDouble());
+      summarySheet
+          .getRangeByIndex(summaryRow, 3)
+          .setNumber(grandRewash.toDouble());
+      summarySheet
+          .getRangeByIndex(summaryRow, 4)
+          .setNumber(grandTotalAll.toDouble());
       summarySheet.getRangeByIndex(summaryRow, 5).setText('100.0%');
 
       // 4. Executive KPI Summary Box
       summaryRow += 2;
-      summarySheet.getRangeByIndex(summaryRow, 1).setText('RINGKASAN EKSEKUTIF:');
+      summarySheet
+          .getRangeByIndex(summaryRow, 1)
+          .setText('RINGKASAN EKSEKUTIF:');
       summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.bold = true;
-      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.fontColor = '#900C46';
+      summarySheet.getRangeByIndex(summaryRow, 1).cellStyle.fontColor =
+          '#900C46';
       summaryRow++;
 
-      final double rewashRate = grandTotalAll > 0 ? (grandRewash / grandTotalAll * 100) : 0.0;
+      final double rewashRate = grandTotalAll > 0
+          ? (grandRewash / grandTotalAll * 100)
+          : 0.0;
       final kpis = [
         ['Total Linen Bersih Terlayani', '$grandClean pcs'],
         ['Total Linen Rewash / Defect', '$grandRewash pcs'],
@@ -332,12 +377,24 @@ class SupabaseService {
       }
 
       // ── Sheet 2: Daily Log Details ───────────────────────────────────────
-      final xls.Worksheet detailSheet = workbook.worksheets.addWithName('DETAIL LOG HARIAN');
-      final detailHeaders = ['Tanggal', 'Waktu', 'Kategori', 'Petugas / Handler', 'Total (Pcs)', 'Rincian Linen', 'Catatan / Noda'];
+      final xls.Worksheet detailSheet = workbook.worksheets.addWithName(
+        'DETAIL LOG HARIAN',
+      );
+      final detailHeaders = [
+        'Tanggal',
+        'Waktu',
+        'Kategori',
+        'Petugas / Handler',
+        'Total (Pcs)',
+        'Rincian Linen',
+        'Catatan / Noda',
+      ];
 
       final detailBanner = detailSheet.getRangeByName('A1:G1');
       detailBanner.merge();
-      detailBanner.setText('FAVEHOTEL PADJAJARAN BOGOR — RIWAYAT LOG HARIAN ($monthName)');
+      detailBanner.setText(
+        'FAVEHOTEL PADJAJARAN BOGOR — RIWAYAT LOG HARIAN ($monthName)',
+      );
       detailBanner.cellStyle.fontSize = 13;
       detailBanner.cellStyle.bold = true;
       detailBanner.cellStyle.fontColor = '#FFFFFF';
@@ -356,19 +413,31 @@ class SupabaseService {
         final dateStr = DateFormat('dd/MM/yyyy').format(log.createdAt);
         final timeStr = DateFormat('HH:mm').format(log.createdAt);
 
-        final itemsText = log.items.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-        final notesText = log.notes.entries.map((e) => '${e.key}: ${e.value}').join('; ');
+        final itemsText = log.items.entries
+            .map((e) => '${e.key}: ${e.value}')
+            .join(', ');
+        final notesText = log.notes.entries
+            .map((e) => '${e.key}: ${e.value}')
+            .join('; ');
 
         detailSheet.getRangeByIndex(detailRow, 1).setText(dateStr);
         detailSheet.getRangeByIndex(detailRow, 2).setText(timeStr);
         detailSheet.getRangeByIndex(detailRow, 3).setText(log.category);
         detailSheet.getRangeByIndex(detailRow, 4).setText(log.handlerName);
-        detailSheet.getRangeByIndex(detailRow, 5).setNumber(log.totalPieces.toDouble());
+        detailSheet
+            .getRangeByIndex(detailRow, 5)
+            .setNumber(log.totalPieces.toDouble());
         detailSheet.getRangeByIndex(detailRow, 6).setText(itemsText);
-        detailSheet.getRangeByIndex(detailRow, 7).setText(notesText.isEmpty ? '-' : notesText);
+        detailSheet
+            .getRangeByIndex(detailRow, 7)
+            .setText(notesText.isEmpty ? '-' : notesText);
 
         if (detailRow % 2 == 1) {
-          detailSheet.getRangeByName('A$detailRow:G$detailRow').cellStyle.backColor = '#F8FAFC';
+          detailSheet
+                  .getRangeByName('A$detailRow:G$detailRow')
+                  .cellStyle
+                  .backColor =
+              '#F8FAFC';
         }
 
         detailRow++;
@@ -382,7 +451,8 @@ class SupabaseService {
       final List<int> bytes = workbook.saveAsStream();
       workbook.dispose();
 
-      final fileName = 'favehotel_Laundry_Recap_${year}_${month.toString().padLeft(2, '0')}.xlsx';
+      final fileName =
+          'favehotel_Laundry_Recap_${year}_${month.toString().padLeft(2, '0')}.xlsx';
       final path = await saveExportFile(bytes, fileName, 'MONTHLY_RECAP');
 
       return ExcelExportResult(

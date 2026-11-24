@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui' show FontFeature;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:laundry_app/services/recap_print_service.dart';
 import 'package:laundry_app/services/supabase_service.dart';
 import 'package:laundry_app/theme/app_theme.dart';
 import 'package:laundry_app/widgets/app_background.dart';
@@ -216,6 +217,45 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
         ),
       );
     }
+  }
+
+  Future<void> _handlePrintPreview() async {
+    if (_logs.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Belum ada log untuk bulan ini.'),
+          backgroundColor: AppColors.statusWarning,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
+
+    final message = await RecapPrintService.openPrintPreview(
+      month: _selectedDate.month,
+      year: _selectedDate.year,
+      logs: _logs,
+    );
+
+    if (!mounted) return;
+    final isBlockedOrUnsupported =
+        message.contains('diblokir') || message.contains('hanya tersedia');
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isBlockedOrUnsupported
+            ? AppColors.statusWarning
+            : AppColors.statusSuccess,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
   }
 
   int get _totalCleanPieces {
@@ -804,63 +844,115 @@ class _MonthlyRecapScreenState extends State<MonthlyRecapScreen>
             color: AppColors.surfaceCard,
             border: Border(top: BorderSide(color: AppColors.hairline)),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 700;
+              final titleBlock = Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Laporan Bulanan favehotel Padjajaran',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Export Excel (.xlsx) atau cetak A4 Print Preview ($monthLabel)',
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              );
+
+              final actionsWrap = Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _isExporting || _logs.isEmpty
+                        ? null
+                        : _handlePrintPreview,
+                    icon: const Icon(Icons.print_rounded, size: 18),
+                    label: const Text(
+                      'Print Preview',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.brandMagenta,
+                      side: BorderSide(
+                        color: _isExporting || _logs.isEmpty
+                            ? AppColors.hairline
+                            : AppColors.brandMagenta,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 15,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: _isExporting || _logs.isEmpty
+                        ? null
+                        : _handleExportExcel,
+                    icon: _isExporting
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.file_download_rounded, size: 18),
+                    label: const Text(
+                      'Export Rekap Bulanan (.xlsx)',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.brandMagenta,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 15,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
+                ],
+              );
+
+              if (isCompact) {
+                return Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Master Spreadsheet favehotel Padjajaran (.xlsx)',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      'Rangkuman total item + rincian riwayat lengkap ($monthLabel)',
-                      style: const TextStyle(
-                        fontSize: 11.5,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
+                    titleBlock,
+                    const SizedBox(height: 12),
+                    actionsWrap,
                   ],
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: _isExporting || _logs.isEmpty
-                    ? null
-                    : _handleExportExcel,
-                icon: _isExporting
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.file_download_rounded, size: 18),
-                label: const Text(
-                  'Export Rekap Bulanan (.xlsx)',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.brandMagenta,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 22,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-              ),
-            ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: titleBlock),
+                  const SizedBox(width: 16),
+                  actionsWrap,
+                ],
+              );
+            },
           ),
         ),
       ],
